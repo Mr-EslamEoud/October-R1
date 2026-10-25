@@ -937,7 +937,8 @@
         const TRANSITIONS = ["slide", "push", "fade", "zoom", "flip", "wipe", "rotate", "blur"];
         const DIRECTIONAL_TRANSITIONS = { slide: true, push: true };
 
-        const QuizScreen = ({ 
+        const QuizScreen = ({
+            questions = QUIZ_DATA, 
             questionData, 
             currentIndex, 
             totalQuestions, 
@@ -959,7 +960,7 @@
                 let wrong = 0;
                 let answered = 0;
 
-                QUIZ_DATA.forEach((q, idx) => {
+                questions.forEach((q, idx) => {
                     const ans = answers[idx];
                     if (ans !== undefined) {
                         answered++;
@@ -979,7 +980,7 @@
                 const percentage = Math.round((answered / totalQuestions) * 100) || 0;
 
                 return { correct, wrong, unanswered, answered, percentage };
-            }, [answers, totalQuestions]);
+            }, [answers, totalQuestions, questions]);
             const [isDrawingMode, setIsDrawingMode] = useState(false);
             const contentRef = useRef(null);
             const touchStartX = useRef(0);
@@ -1019,8 +1020,8 @@
             }, [currentIndex]);
 
             useEffect(() => {
-                setView(v => (v.index === currentIndex ? { ...v, answer: userAnswer } : v));
-            }, [userAnswer, currentIndex]);
+                setView(v => (v.index === currentIndex ? { ...v, data: questionData, answer: userAnswer } : v));
+            }, [questionData, userAnswer, currentIndex]);
 
             useEffect(() => {
                 if (contentRef.current) {
@@ -1288,7 +1289,7 @@
                                             <span className="text-xs font-normal text-gray-400">اضغط على أي رقم للانتقال له</span>
                                         </h4>
                                         <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 md:gap-2 max-h-56 md:max-h-64 overflow-y-auto p-1.5 border border-gray-200 dark:border-gray-800 rounded-xl bg-gray-50/50 dark:bg-gray-800/30">
-                                            {QUIZ_DATA.map((q, idx) => {
+                                            {questions.map((q, idx) => {
                                                 const ans = answers[idx];
                                                 const isCur = idx === currentIndex;
                                                 let btnColor = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-accent";
@@ -1440,11 +1441,43 @@
             );
         };
 
+                const shuffleQuizOptions = (data) => {
+            return data.map(q => {
+                if (q.type !== 'mcq' || !Array.isArray(q.options) || q.options.length <= 1) {
+                    return { ...q };
+                }
+                const indexed = q.options.map((opt, i) => ({ opt, isCorrect: i === q.correctAnswer }));
+                for (let i = indexed.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [indexed[i], indexed[j]] = [indexed[j], indexed[i]];
+                }
+                return {
+                    ...q,
+                    options: indexed.map(item => item.opt),
+                    correctAnswer: indexed.findIndex(item => item.isCorrect)
+                };
+            });
+        };
+
         const STORAGE_KEY_PROGRESS = 'quiz_progress_unit1';
         const STORAGE_KEY_THEME = 'quiz_dark_mode';
 
         const App = () => {
             const [screen, setScreen] = useState('home'); 
+            const [questions, setQuestions] = useState(() => {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (parsed.questions && Array.isArray(parsed.questions) && parsed.questions.length === QUIZ_DATA.length) {
+                            return parsed.questions;
+                        } else if (parsed.answers && Object.keys(parsed.answers).length > 0) {
+                            return QUIZ_DATA;
+                        }
+                    }
+                } catch(e) {}
+                return shuffleQuizOptions(QUIZ_DATA);
+            });
             const [currentIndex, setCurrentIndex] = useState(() => {
                 try {
                     const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
@@ -1483,10 +1516,11 @@
                     localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify({
                         currentIndex,
                         answers,
+                        questions,
                         lastUpdated: Date.now()
                     }));
                 } catch(e) {}
-            }, [currentIndex, answers]);
+            }, [currentIndex, answers, questions]);
 
             // تطبيق وحفظ الوضع الليلي
             useEffect(() => {
@@ -1508,6 +1542,8 @@
                 try {
                     localStorage.removeItem(STORAGE_KEY_PROGRESS);
                 } catch(e) {}
+                const fresh = shuffleQuizOptions(QUIZ_DATA);
+                setQuestions(fresh);
                 setCurrentIndex(0);
                 setAnswers({});
                 setScreen('quiz');
@@ -1521,13 +1557,15 @@
                 try {
                     localStorage.removeItem(STORAGE_KEY_PROGRESS);
                 } catch(e) {}
+                const fresh = shuffleQuizOptions(QUIZ_DATA);
+                setQuestions(fresh);
                 setCurrentIndex(0);
                 setAnswers({});
                 setScreen('quiz');
             };
 
             const handleNext = () => {
-                if (currentIndex < QUIZ_DATA.length - 1) {
+                if (currentIndex < questions.length - 1) {
                     const nextIdx = currentIndex + 1;
                     // بعد كل 10 أسئلة (أي عند السؤال 10، 20، 30... حيث currentIndex هو 9، 19، 29...)
                     if ((currentIndex + 1) % 10 === 0) {
@@ -1572,9 +1610,10 @@
                     
                     {screen === 'quiz' && (
                         <QuizScreen 
-                            questionData={QUIZ_DATA[currentIndex]}
+                            questions={questions}
+                            questionData={questions[currentIndex]}
                             currentIndex={currentIndex}
-                            totalQuestions={QUIZ_DATA.length}
+                            totalQuestions={questions.length}
                             onNext={handleNext}
                             onPrev={handlePrev}
                             onHome={() => setScreen('home')}
