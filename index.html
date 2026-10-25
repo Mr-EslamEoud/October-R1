@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>موسوعة الكنز التعليمي - الاختبارات</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#111111',
+                            light: '#f8f8f8',
+                            border: '#333333'
+                        },
+                        secondary: {
+                            DEFAULT: '#D4AF37', 
+                            dark: '#B5952F',
+                            light: '#FDF8E7'
+                        },
+                        accent: {
+                            DEFAULT: '#059669',
+                            dark: '#047857',
+                            light: '#D1FAE5',
+                            glow: '#10B981'
+                        },
+                        qhead: '#059669',
+                        correct: '#16A34A',
+                        wrong: '#DC2626'
+                    },
+                    boxShadow: {
+                        'premium': '0 10px 30px -10px rgba(0, 0, 0, 0.1)',
+                        'glow': '0 0 15px rgba(212, 175, 55, 0.4)',
+                        'glow-emerald': '0 0 18px rgba(5, 150, 105, 0.45)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            overflow: hidden; 
+            user-select: none; 
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .watermark-layer {
+            position: absolute;
+            inset: -22%;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(285px, 1fr));
+            grid-auto-rows: 235px;
+            place-items: center;
+            transform: rotate(-24deg);
+            pointer-events: none;
+            user-select: none;
+        }
+        .wm-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.15;
+            white-space: nowrap;
+        }
+        .wm-title {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 900;
+            font-size: 30px;
+            color: rgba(212, 175, 55, 0.24);
+        }
+        .wm-sub {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            margin-top: 2px;
+            color: rgba(5, 150, 105, 0.22);
+        }
+        .dark .wm-title { color: rgba(212, 175, 55, 0.20); }
+        .dark .wm-sub { color: rgba(16, 185, 129, 0.20); }
+
+        @media (max-width: 640px) {
+            .watermark-layer {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+                grid-auto-rows: 170px;
+            }
+            .wm-title { font-size: 21px; }
+            .wm-sub { font-size: 12px; }
+        }
+
+        .slide-enter { transform: translateX(-20px); opacity: 0; }
+        .slide-enter-active { transform: translateX(0); opacity: 1; transition: all 0.3s ease-out; }
+        .slide-exit { transform: translateX(0); opacity: 1; }
+        .slide-exit-active { transform: translateX(20px); opacity: 0; transition: all 0.3s ease-in; }
+
+        .fade-scale-enter { transform: scale(0.95); opacity: 0; }
+        .fade-scale-enter-active { transform: scale(1); opacity: 1; transition: all 0.3s ease-out; }
+
+        .expand-enter { max-height: 0; opacity: 0; overflow: hidden; }
+        .expand-enter-active { max-height: 1500px; opacity: 1; transition: all 0.5s ease-in-out; }
+
+        .drawing-canvas {
+            cursor: none !important; 
+            touch-action: none;
+        }
+        
+        .custom-cursor {
+            pointer-events: none;
+            position: fixed;
+            z-index: 9999;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .intro-bg {
+            background:
+                radial-gradient(1100px 550px at 50% -15%, rgba(212, 175, 55, 0.16), transparent 62%),
+                radial-gradient(750px 480px at 95% 110%, rgba(5, 150, 105, 0.12), transparent 60%),
+                radial-gradient(600px 400px at 5% 100%, rgba(16, 185, 129, 0.10), transparent 60%),
+                linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
+        }
+        .dark .intro-bg {
+            background:
+                radial-gradient(1100px 550px at 50% -15%, rgba(212, 175, 55, 0.18), transparent 62%),
+                radial-gradient(750px 480px at 95% 110%, rgba(16, 185, 129, 0.12), transparent 60%),
+                radial-gradient(600px 400px at 5% 100%, rgba(5, 150, 105, 0.08), transparent 60%),
+                linear-gradient(180deg, #0f1115 0%, #0f1512 100%);
+        }
+
+        .intro-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(75px);
+            pointer-events: none;
+            will-change: transform;
+        }
+        .intro-orb-1 { width: 300px; height: 300px; background: rgba(212, 175, 55, 0.38); top: -100px; right: -70px; animation: introFloat 9s ease-in-out infinite; }
+        .intro-orb-2 { width: 240px; height: 240px; background: rgba(5, 150, 105, 0.26); bottom: -70px; left: -60px; animation: introFloat 12s ease-in-out infinite reverse; }
+        .intro-orb-3 { width: 170px; height: 170px; background: rgba(212, 175, 55, 0.22); bottom: 18%; left: 12%; animation: introFloat 14s ease-in-out infinite; }
+
+        .intro-grid {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0.5;
+            background-image:
+                linear-gradient(rgba(17, 17, 17, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(17, 17, 17, 0.035) 1px, transparent 1px);
+            background-size: 46px 46px;
+            mask-image: radial-gradient(ellipse at center, black 25%, transparent 78%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 25%, transparent 78%);
+        }
+        .dark .intro-grid {
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+        }
+
+        .intro-gold {
+            background: linear-gradient(120deg, #9E7C1F 0%, #F4D774 30%, #D4AF37 55%, #B5952F 75%, #F4D774 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: introShine 6s ease-in-out infinite;
+        }
+
+        @keyframes introShine {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+        @keyframes introFloat {
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            50% { transform: translate3d(0, -28px, 0); }
+        }
+        @keyframes introUp {
+            from { opacity: 0; transform: translateY(28px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes introPop {
+            0% { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+            70% { transform: scale(1.06) rotate(2deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0); }
+        }
+        .intro-item { animation: introUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .intro-emblem { animation: introPop 0.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .intro-emblem-inner { animation: introFloat 5s ease-in-out infinite 1s; }
+
+        .intro-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.95rem;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(5, 150, 105, 0.5);
+            color: #065f46;
+            box-shadow: 0 6px 16px -10px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(6px);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .intro-chip:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px rgba(5, 150, 105, 0.6); }
+        .dark .intro-chip {
+            background: rgba(17, 24, 21, 0.78);
+            border-color: rgba(16, 185, 129, 0.45);
+            color: #d1fae5;
+        }
+        .intro-chip i { color: #047857; font-size: 0.8rem; }
+        .dark .intro-chip i { color: #10B981; }
+
+        .intro-chip-lg {
+            padding: 0.7rem 1.6rem;
+            font-size: 1rem;
+            border-width: 2px;
+            border-color: rgba(5, 150, 105, 0.8);
+            gap: 0.7rem;
+            box-shadow: 0 10px 25px -12px rgba(5, 150, 105, 0.85);
+        }
+        .intro-chip-lg i { font-size: 1.05rem; }
+        @media (min-width: 768px) {
+            .intro-chip-lg { padding: 0.85rem 2.2rem; font-size: 1.25rem; }
+            .intro-chip-lg i { font-size: 1.25rem; }
+        }
+
+        .intro-cta {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .intro-cta::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-120%);
+            background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+            transition: transform 0.75s ease;
+            z-index: 1;
+        }
+        .intro-cta:hover::after { transform: translateX(120%); }
+
+        .intro-divider {
+            height: 3px;
+            width: 70px;
+            background: linear-gradient(90deg, transparent, #D4AF37, #059669, transparent);
+            border-radius: 999px;
+        }
+
+        @keyframes qOutNext { from { opacity: 1; transform: translateX(0) scale(1); } to { opacity: 0; transform: translateX(65px) scale(0.975); } }
+        @keyframes qOutPrev { from { opacity: 1; transform: translateX(0) scale(1); } to { opacity: 0; transform: translateX(-65px) scale(0.975); } }
+        @keyframes qInNext { from { opacity: 0; transform: translateX(-85px) scale(0.975); } to { opacity: 1; transform: translateX(0) scale(1); } }
+        @keyframes qInPrev { from { opacity: 0; transform: translateX(85px) scale(0.975); } to { opacity: 1; transform: translateX(0) scale(1); } }
+
+        @keyframes qOutPushNext { to { opacity: 0; transform: translateY(95px) scale(0.985); } }
+        @keyframes qOutPushPrev { to { opacity: 0; transform: translateY(-95px) scale(0.985); } }
+        @keyframes qInPushNext { from { opacity: 0; transform: translateY(-95px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        @keyframes qInPushPrev { from { opacity: 0; transform: translateY(95px) scale(0.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+        @keyframes qOutFade { to { opacity: 0; } }
+        @keyframes qInFade { from { opacity: 0; } }
+
+        @keyframes qOutZoom { to { opacity: 0; transform: scale(1.12); } }
+        @keyframes qInZoom { from { opacity: 0; transform: scale(0.86); } to { opacity: 1; transform: scale(1); } }
+
+        @keyframes qOutFlip { to { opacity: 0; transform: perspective(1400px) rotateY(-80deg) translateZ(-40px); } }
+        @keyframes qInFlip { from { opacity: 0; transform: perspective(1400px) rotateY(80deg) translateZ(-40px); } to { opacity: 1; transform: perspective(1400px) rotateY(0) translateZ(0); } }
+
+        @keyframes qOutWipe { to { opacity: 0; clip-path: inset(0 0 0 100%); } }
+        @keyframes qInWipe { from { opacity: 0; clip-path: inset(0 100% 0 0); } to { opacity: 1; clip-path: inset(0 0 0 0); } }
+
+        @keyframes qOutRotate { to { opacity: 0; transform: rotate(-7deg) scale(0.9); } }
+        @keyframes qInRotate { from { opacity: 0; transform: rotate(7deg) scale(0.9); } to { opacity: 1; transform: rotate(0) scale(1); } }
+
+        @keyframes qOutBlur { to { opacity: 0; filter: blur(14px); transform: scale(1.04); } }
+        @keyframes qInBlur { from { opacity: 0; filter: blur(14px); transform: scale(0.98); } to { opacity: 1; filter: blur(0); transform: scale(1); } }
+
+        .q-out { animation-duration: 0.24s; animation-timing-function: cubic-bezier(0.4, 0, 1, 1); animation-fill-mode: both; }
+        .q-in { animation-duration: 0.5s; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); animation-fill-mode: both; }
+
+        .q-out-slide-next { animation-name: qOutNext; }
+        .q-out-slide-prev { animation-name: qOutPrev; }
+        .q-in-slide-next { animation-name: qInNext; }
+        .q-in-slide-prev { animation-name: qInPrev; }
+
+        .q-out-push-next { animation-name: qOutPushNext; }
+        .q-out-push-prev { animation-name: qOutPushPrev; }
+        .q-in-push-next { animation-name: qInPushNext; }
+        .q-in-push-prev { animation-name: qInPushPrev; }
+
+        .q-out-fade { animation-name: qOutFade; }
+        .q-in-fade { animation-name: qInFade; }
+        .q-out-zoom { animation-name: qOutZoom; }
+        .q-in-zoom { animation-name: qInZoom; }
+        .q-out-flip { animation-name: qOutFlip; animation-duration: 0.3s; }
+        .q-in-flip { animation-name: qInFlip; animation-duration: 0.6s; }
+        .q-out-wipe { animation-name: qOutWipe; }
+        .q-in-wipe { animation-name: qInWipe; animation-duration: 0.6s; }
+        .q-out-rotate { animation-name: qOutRotate; }
+        .q-in-rotate { animation-name: qInRotate; }
+        .q-out-blur { animation-name: qOutBlur; }
+        .q-in-blur { animation-name: qInBlur; animation-duration: 0.55s; }
+
+        @keyframes optIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+        .q-in .opt-stagger { animation: optIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        .q-in .opt-stagger:nth-child(1) { animation-delay: 0.10s; }
+        .q-in .opt-stagger:nth-child(2) { animation-delay: 0.17s; }
+        .q-in .opt-stagger:nth-child(3) { animation-delay: 0.24s; }
+        .q-in .opt-stagger:nth-child(4) { animation-delay: 0.31s; }
+
+        @keyframes numPop { from { opacity: 0; transform: translateY(-10px) scale(0.7); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .q-num-pop { animation: numPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .q-in, .q-out, .q-in .opt-stagger, .q-num-pop { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+        const CONFIG = {
+            enableAnimations: true, 
+            interfaceType: "مراجعة درس", 
+            subject: "الدراسات الاجتماعية", 
+            grade: "الصف الأول الإعدادي", 
+            lesson: "مراجعة شهر أكتوبر", 
+        };
+
+        const QUIZ_DATA = [
+            {"id": 1, "type": "mcq", "question": "تقترب قارة إفريقيا من قارة أوروبا عند...", "options": ["مضيق جبل طارق", "مضيق باب المندب", "قناة السويس", "مضيق موزمبيق"], "correctAnswer": 0, "explanation": "قارة إفريقيا تقترب من قارة *أوروبا* عند مضيق *جبل طارق* بينما تقترب من *آسيا* عند مضيق *باب المندب*"},
+            {"id": 2, "type": "essay", "question": "بم تفسر: تقسيم قارة إفريقيا إلى عدد كبير من الدول؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nيرجع تقسيم القارة إلى *54* دولة مختلفة المساحة إلى تصارع الدول *الاستعمارية* على *إفريقيا* لنهب خيراتها واستغلال ثرواتها"},
+            {"id": 3, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتبر السودان أكبر دول القارة الإفريقية من حيث المساحة)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تعد *الجزائر* أكبر دول القارة الإفريقية من حيث المساحة وليست *السودان*"},
+            {"id": 4, "type": "mcq", "question": "أي من الحضارات القديمة التالية نشأت في إريتريا وإثيوبيا؟", "options": ["حضارة أكسوم", "حضارة كوش", "حضارة قرطاج", "الحضارة المصرية"], "correctAnswer": 0, "explanation": "ظهرت حضارة *أكسوم* في شرق إفريقيا في *إريتريا* و *إثيوبيا* وكان للنشاط التجاري دور بارز في نشأتها"},
+            {"id": 5, "type": "essay", "question": "ما النتائج المترتبة على: اهتمام محمد علي باشا باكتشاف منابع النيل؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأرسل رحلات لاكتشاف منابع النيل عام *1839* وانتهت باكتشاف النيل *الأبيض* ورسم خريطة للنيل حتى جنوب *السودان*"},
+            {"id": 6, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (كانت حضارة قرطاج تعتمد بشكل رئيسي على الزراعة حول نهر النيل)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "حضارة *قرطاج* تختلف عن الحضارات السابقة حيث لم ترتبط بنهر *النيل* وإنما قامت على *التجارة* وتأسست على يد *الفينيقيين*"},
+            {"id": 7, "type": "mcq", "question": "أرسل الملك نخاو الثاني بعثة للدوران حول إفريقيا استمرت...", "options": ["ثلاث سنوات", "أربع سنوات", "خمس سنوات", "سبع سنوات"], "correctAnswer": 0, "explanation": "أرسل الملك *نخاو الثاني* بعثة للدوران حول إفريقيا بدأت من البحر *الأحمر* وعادت عبر مضيق *جبل طارق* واستمرت الرحلة *ثلاث* سنوات"},
+            {"id": 8, "type": "essay", "question": "أيد بالدليل التاريخي: تأثر الكوشيون بمظاهر الحضارة المصرية القديمة.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- ظهر ذلك في بناء *الأهرامات* والمعابد ونحت التماثيل.\n2- عبدوا بعض المعبودات المصرية القديمة مثل *رع* و *آمون* و *أوزوريس* و *إيزيس*"},
+            {"id": 9, "type": "mcq", "question": "تمتد قارة إفريقيا بين نصفي الكرة الأرضية حيث يقع الجزء الأكبر من مساحتها في النصف...", "options": ["الشمالي", "الجنوبي", "الشرقي", "الغربي"], "correctAnswer": 0, "explanation": "يقع نحو *ثلثي* مساحتها في النصف *الشمالي* والثلث الآخر في النصف *الجنوبي*"},
+            {"id": 10, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (استطاع ابن بطوطة اختراق الصحراء الكبرى حتى وصل إلى مالي)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "قام *ابن بطوطة* برحلات مهمة في شمال وغرب إفريقيا واستطاع أن يخترق الصحراء الكبرى من الشمال إلى الجنوب حتى وصل إلى *مالي*"},
+            {"id": 11, "type": "mcq", "question": "يطلق على المساحة التي يجري بها نهر النيل وروافده مصطلح...", "options": ["حوض نهر النيل", "الاقتصاد الأزرق", "تجمع الأندوجو", "الاقتصاد الأخضر"], "correctAnswer": 0, "explanation": "يُطلق على المساحة التي يجري بها نهر النيل وروافده *حوض نهر النيل* وتشغل مساحته نحو عشرة بالمائة من مساحة قارة *إفريقيا*"},
+            {"id": 12, "type": "essay", "question": "بم تفسر: يُعد نهر النيل نهراً دولياً؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nوذلك لامتداد مجراه وروافده داخل أراضي إحدى عشرة *دولة* إفريقية"},
+            {"id": 13, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تقع المنابع الدائمة لنهر النيل في هضبة الحبشة)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "المنابع الدائمة تقع في هضبة *البحيرات الاستوائية* بينما تقع المنابع الموسمية في هضبة *الحبشة*"},
+            {"id": 14, "type": "mcq", "question": "أعلى قمة جبلية في إفريقيا وتتكون فوقها الثلوج رغم وقوعها بالمنطقة الاستوائية هي قمة جبل...", "options": ["كلمنجارو", "كينيا", "توبقال", "العوينات"], "correctAnswer": 0, "explanation": "يُعد جبل *كلمنجارو* أعلى قمة جبلية في إفريقيا مما أدى إلى تكون الجليد فوق قمته رغم وقوعه بالمنطقة الاستوائية"},
+            {"id": 15, "type": "essay", "question": "ما المقصود بمفهوم الاقتصاد الأزرق؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nهو استثمار الموارد المائية بشكل مستدام يضمن تحقيق التنمية المستدامة والقضاء على *الفقر* وتحقيق الاكتفاء الذاتي من الغذاء مع المحافظة على النظام *البيئي*"},
+            {"id": 16, "type": "mcq", "question": "يحد قارة إفريقيا من جهة الشمال...", "options": ["البحر المتوسط", "البحر الأحمر", "المحيط الأطلنطي", "المحيط الهندي"], "correctAnswer": 0, "explanation": "يحدها من الشمال *البحر المتوسط* الذي يفصلها عن قارة *أوروبا*"},
+            {"id": 17, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تكونت جبال البحر الأحمر نتيجة ثورانات بركانية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "جبال *البحر الأحمر* تُعد من الجبال *الانكسارية* بينما الجبال *البركانية* تتمثل في جبل *كينيا* و *كلمنجارو*"},
+            {"id": 18, "type": "essay", "question": "ما النتائج المترتبة على: خصوبة التربة في هضبة الحبشة؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- ساعدت على قيام حرفة *الزراعة* ونشأة الحضارات القديمة بها.\n2- انتقال الطمي المنقول منها عبر الأنهار لتكوين السهول الفيضية الخصبة مثل وادي *النيل* في *مصر* و *السودان*"},
+            {"id": 19, "type": "mcq", "question": "أكبر جزر قارة إفريقيا وتقع في المحيط الهندي ويفصلها عن الساحل الشرقي للقارة مضيق موزمبيق...", "options": ["جزيرة مدغشقر", "جزر القمر", "جزر الكناري", "جزر سيشل"], "correctAnswer": 0, "explanation": "جزيرة *مدغشقر* أكبر جزر القارة وتقع في المحيط *الهندي* ويفصلها عن الساحل الشرقي مضيق *موزمبيق*"},
+            {"id": 20, "type": "essay", "question": "قارن بين: الأهمية الاقتصادية لسهول البحر المتوسط وسهول البحر الأحمر.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- سهول البحر المتوسط: تتميز بوجود النباتات الطبيعية والمحاصيل الزراعية التي تعتمد على الأمطار *الشتوية*.\n2- سهول البحر الأحمر: غنية بالثروات *المعدنية* ومصادر *الطاقة*"},
+            {"id": 21, "type": "mcq", "question": "تمر بقارة إفريقيا ثلاث دوائر عرض رئيسية منها دائرة الاستواء ومدار الجدي و...", "options": ["مدار السرطان", "الدائرة القطبية الشمالية", "الدائرة القطبية الجنوبية", "خط جرينتش"], "correctAnswer": 0, "explanation": "تمتد القارة بين أكثر من *70* دائرة عرضية، وتمر بها ثلاث دوائر عرض رئيسية هي دائرة *الاستواء* ومدار *السرطان* ومدار *الجدي*"},
+            {"id": 22, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يُعد خزان سنار من جهود مصر لتحقيق التنمية المستدامة في السودان)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "من الجهود التي قامت بها *مصر* إنشاء خزان *سنار* على النيل *الأزرق* لصالح *السودان*"},
+            {"id": 23, "type": "essay", "question": "بم تفسر: الأهمية الاقتصادية للسهول الفيضية بقارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nساعدت الأنهار على تكوين السهول الفيضية الخصبة الصالحة لحرفة *الزراعة* مثل سهول وادي *النيل* التي تمتد في *مصر* و *السودان*"},
+            {"id": 24, "type": "mcq", "question": "بدأ البرتغاليون محاولاتهم لاكتشاف إفريقيا في القرن الخامس عشر الميلادي في عهد...", "options": ["الأمير هنري الملاح", "بارتولوميو دياس", "فاسكو دي جاما", "جون سبيك"], "correctAnswer": 0, "explanation": "بدأ *البرتغاليون* محاولاتهم لاكتشاف إفريقيا في القرن *15* الميلادي في عهد الأمير *هنري الملاح* واستفادوا مما كتبه *العرب*"},
+            {"id": 25, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تنحدر هضبة البحيرات الاستوائية من الشمال إلى الجنوب)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تنحدر الهضبة من *الجنوب* إلى *الشمال* وتعلوها القمم الجبلية *البركانية*"},
+            {"id": 26, "type": "mcq", "question": "تكونت جبال أطلس في شمال غرب إفريقيا نتيجة لحركات...", "options": ["التوائية", "انكسارية", "بركانية", "جليدية"], "correctAnswer": 0, "explanation": "الجبال *الالتوائية* مثل جبال الكاب وجبال *أطلس* التي تمتد في سلسلتين متوازيتين على طول الساحل الشمالي الغربي"},
+            {"id": 27, "type": "essay", "question": "دلل على: الأهمية الاستراتيجية لموقع قارة إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- تشرف قارة إفريقيا بحكم موقعها الجغرافي على ممرات مائية مهمة مثل مضيق *جبل طارق* ومضيق *باب المندب* وقناة *السويس*.\n2- تحكمها في أهم طرق الملاحة *العالمية*"},
+            {"id": 28, "type": "mcq", "question": "من الحضارات القديمة التي ظهرت في قارة إفريقيا وامتدت في شمال السودان حول نهر النيل...", "options": ["حضارة كوش", "حضارة أكسوم", "حضارة قرطاج", "الحضارة المصرية"], "correctAnswer": 0, "explanation": "أقام الكوشيون دولة عظيمة امتدت في شمال *السودان* حول نهر النيل وكانت في بدايتها متمركزة في مدينة *نبتة* ثم انتقلت إلى *مروي*"},
+            {"id": 29, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (اقتصرت منابع نهر النيل على هضبة البحيرات الاستوائية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "نهر *النيل* ثنائي المنبع حيث يعتمد على منابع *دائمة* في هضبة *البحيرات الاستوائية* ومنابع *موسمية* في هضبة *الحبشة*"},
+            {"id": 30, "type": "essay", "question": "ماذا يحدث إذا: كانت الأمطار تسقط على هضبة الحبشة طوال العام؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- ستتحول هضبة *الحبشة* إلى منبع *دائم* لمياه نهر *النيل*.\n2- سيزداد منسوب نهر *النيل* في *مصر* و *السودان* طوال العام ولن يقتصر تدفق مياهها القوي على فصل *الصيف*"},
+            {"id": 31, "type": "mcq", "question": "يحد قارة إفريقيا من جهة الغرب ويفصلها عن قارتي أمريكا الشمالية والجنوبية...", "options": ["المحيط الهندي", "المحيط الأطلنطي", "المحيط الهادي", "البحر الأحمر"], "correctAnswer": 1, "explanation": "يحدها من الغرب المحيط *الأطلنطي* الذي يفصلها عن قارتي *أمريكا الشمالية* و *أمريكا الجنوبية*"},
+            {"id": 32, "type": "essay", "question": "ما العلاقة بين: الطفوح البركانية وظهور الحضارات القديمة في إثيوبيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدت الطفوح *البركانية* في هضبة *الحبشة* إلى خصوبة تربتها مما ساعد على قيام حرفة *الزراعة* ونشأة الحضارات القديمة بها"},
+            {"id": 33, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تمتد قارة إفريقيا بين أكثر من 70 دائرة عرضية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تمتد القارة بين أكثر من *70* دائرة عرضية، وتمر بها ثلاث دوائر عرض رئيسية هي دائرة *الاستواء* ومدار *السرطان* ومدار *الجدي*"},
+            {"id": 34, "type": "mcq", "question": "تقع هضبة البحيرات الاستوائية في وسط قارة إفريقيا وتمر بها...", "options": ["دائرة الاستواء", "مدار السرطان", "مدار الجدي", "الدائرة القطبية الشمالية"], "correctAnswer": 0, "explanation": "تقع هضبة *البحيرات الاستوائية* في وسط القارة، وتمر بها دائرة *الاستواء*، وتنحدر من الجنوب إلى الشمال"},
+            {"id": 35, "type": "essay", "question": "ما النتائج المترتبة على: امتداد الأخدود الإفريقي العظيم في شرق إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى تكون مجموعة انكسارات طولية يُعد البحر *الأحمر* وخليجا *عدن* و *العقبة* أجزاء منه"},
+            {"id": 36, "type": "mcq", "question": "أي من الجبال التالية تمتد في جنوب قارة إفريقيا وتعد من الجبال الالتوائية؟", "options": ["جبال البحر الأحمر", "جبال أطلس", "جبال الكاب", "جبال دراكنزبرج"], "correctAnswer": 2, "explanation": "الجبال *الالتوائية* مثل: جبال *الكاب* جنوب القارة، وجبال *أطلس* في الشمال الغربي"},
+            {"id": 37, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتبر جبال دراكنزبرج من الجبال البركانية في قارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "توجد أيضاً جبال *دراكنزبرج* في جنوب القارة وهي تصنف ضمن الجبال *البركانية* مثل جبل *كينيا* و *كلمنجارو*"},
+            {"id": 38, "type": "essay", "question": "قارن بين: هضبة شمال إفريقيا وهضبة الحبشة من حيث الموقع.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- هضبة *شمال إفريقيا*: تمتد في الجزء الشمالي من القارة وتنحدر نحو البحر *المتوسط*.\n2- هضبة *الحبشة*: تقع في الجزء *الشرقي* من قارة إفريقيا"},
+            {"id": 39, "type": "mcq", "question": "قامت حضارة قرطاج على الساحل الشمالي لإفريقيا في دولة...", "options": ["مصر", "السودان", "الجزائر", "تونس"], "correctAnswer": 3, "explanation": "ظهرت على الساحل الشمالي لإفريقيا ( *تونس* حاليا ) ويرجع الفضل إلى *الفينيقيين* في تأسيس مدينة *قرطاج*"},
+            {"id": 40, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يُعد نهر السوباط من الروافد الموسمية لنهر النيل)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تتضمن هضبة *الحبشة* مجموعة من الروافد الموسمية مثل نهر *السوباط* الذي يلتقي ببحر *الجبل* والنيل *الأزرق* ونهر *عطبرة*"},
+            {"id": 41, "type": "essay", "question": "بم تفسر: الأهمية الاقتصادية لجبال قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- دعم نشاط *السياحة* لأنها تتميز بمناظر طبيعية تجذب السياح.\n2- *التعدين* والصناعة لأنها غنية بالثروات *المعدنية* كالحديد و *الذهب* و *الفضة*"},
+            {"id": 42, "type": "mcq", "question": "تم تأسيس تجمع الأندوجو عام 1983م، وكلمة الأندوجو تعني باللغة السواحلية...", "options": ["السلام", "التنمية", "الإخاء", "التعاون"], "correctAnswer": 2, "explanation": "شكلت دول حوض النيل تجمعاً عام *1983* يُعرف باسم *الأندوجو* ويعني *الإخاء* باللغة السواحلية وكانت *مصر* صاحبة فكرة إنشائه"},
+            {"id": 43, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تتسع السهول الساحلية للبحر المتوسط في بلاد المغرب العربي)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تتسع في شمال *مصر*، بينما تضيق في بلاد *المغرب العربي* بسبب اقتراب جبال *أطلس* من الساحل"},
+            {"id": 44, "type": "essay", "question": "أيد بالدليل التاريخي: كان للمصريين القدماء دور في الكشوف الجغرافية بقارة إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- قام الرحالة *حر-خوف* بأربع رحلات نحو الجنوب.\n2- أرسل الملك *نخاو الثاني* بعثة للدوران حول إفريقيا استمرت *ثلاث* سنوات"},
+            {"id": 45, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تحصر جبال أطلس بينها هضبة الشطوط في الجزائر)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "جبال *أطلس* تمتد في سلسلتين متوازيتين وتحصران بينهما هضبة *الشطوط* في *الجزائر*"},
+            {"id": 46, "type": "mcq", "question": "من الأنهار التي ساعدت على تكوين سهول فيضية خصبة في قارة إفريقيا نهر...", "options": ["النيجر", "كاجيرا", "السوباط", "عطبرة"], "correctAnswer": 0, "explanation": "يجري في قارة إفريقيا عدد من الأنهار، مثل نهر *النيل*، ونهر *النيجر*، ونهر *الكونغو*، وقد ساعدت تلك الأنهار على تكوين السهول الفيضية"},
+            {"id": 47, "type": "essay", "question": "ما النتائج المترتبة على: تنوع المناخ في قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى تنوع المناخ إلى تنوع النباتات *الطبيعية* و *الحيوانات* والمحاصيل *الزراعية*"},
+            {"id": 48, "type": "mcq", "question": "الحضارة الإفريقية القديمة التي اشتهرت بصناعة الفخار وزخرفته وصناعة الزجاج هي حضارة...", "options": ["أكسوم", "كوش", "قرطاج", "المصرية القديمة"], "correctAnswer": 0, "explanation": "اشتهرت *أكسوم* أيضاً بصناعة *الفخار* وزخرفته، وكذلك صناعة *الزجاج*"},
+            {"id": 49, "type": "mcq", "question": "من منابع نهر النيل الموسمية التي تلتقي ببحر الجبل وتمده بالمياه نهر...", "options": ["السوباط", "كاجيرا", "النيجر", "الكونغو"], "correctAnswer": 0, "explanation": "تتضمن مجموعة من الروافد مثل نهر *السوباط* الذي يلتقي ببحر *الجبل* ويمده بمياهه فيسترد النيل قوته"},
+            {"id": 50, "type": "essay", "question": "دلل على صحة العبارة: لم يقتصر اهتمام مصر باكتشاف قارة إفريقيا على العصر الحديث فقط.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- في عصر المصريين القدماء قام الرحالة *حر-خوف* بأربع رحلات نحو الجنوب.\n2- أرسل الملك *نخاو الثاني* بعثة للدوران حول إفريقيا استمرت *ثلاث* سنوات"},
+            {"id": 51, "type": "mcq", "question": "تطل قارة إفريقيا من جهة الشرق على المحيط...", "options": ["الهندي", "الأطلنطي", "الهادي", "القطبي"], "correctAnswer": 0, "explanation": "يحدها من الشرق البحر *الأحمر* والمحيط *الهندي* اللذان يفصلانها عن قارة *آسيا*"},
+            {"id": 52, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يُعد نهر كاجيرا من أهم مصادر مياه بحيرة فيكتوريا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "يصب فيها من الغرب نهر *كاجيرا* الذي يُعد من أهم مصادر مياه بحيرة *فيكتوريا*"},
+            {"id": 53, "type": "essay", "question": "بم تفسر: الأهمية الحضارية لقارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nنشأت على أرض قارتنا الإفريقية العديد من أقدم الحضارات في العالم، مثل الحضارة *المصرية* القديمة، وحضارة *كوش* في *السودان*، وحضارة *أكسوم*، وحضارة *قرطاج*"},
+            {"id": 54, "type": "mcq", "question": "السهول الساحلية التي تتسع في تنزانيا وتضيق في كينيا هي سهول المحيط...", "options": ["الهندي", "الأطلنطي", "الهادي", "المتجمد"], "correctAnswer": 0, "explanation": "سهول المحيط *الهندي* تختلف من حيث الاتساع، فمثلا تتميز السهول في *تنزانيا* باتساعها أما في *كينيا* فهي عبارة عن شريط ضيق"},
+            {"id": 55, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تتسم سهول المحيط الأطلنطي في إفريقيا بأنها ضيقة وفقيرة زراعياً)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تتميز بأنها سهول *واسعة* غنية بحقولها *الزراعية*"},
+            {"id": 56, "type": "mcq", "question": "أعلى قمة جبلية في سلسلة جبال أطلس هي قمة جبل...", "options": ["توبقال", "شايب البنات", "كلمنجارو", "كينيا"], "correctAnswer": 0, "explanation": "يُعد جبل *توبقال* بالمغرب أعلى قمة جبلية في السلسلة"},
+            {"id": 57, "type": "essay", "question": "أيد بالدليل: بذلت مصر جهوداً كبيرة لتحقيق التنمية المستدامة في دول حوض النيل.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- إنشاء خزان *سنار* على النيل *الأزرق* لصالح *السودان*.\n2- حفر عشرات الآبار في *كينيا*.\n3- إنشاء سد *أوين* بأوغندا"},
+            {"id": 58, "type": "mcq", "question": "من المعاهدات التي نصت على التزام دول حوض النيل بعدم القيام بمشروعات دون اتفاق مسبق مع مصر...", "options": ["اتفاقية 1929م", "اتفاقية 2015م", "تجمع الأندوجو", "أجندة 2063"], "correctAnswer": 0, "explanation": "اتفاقية *1929* نصت على التزام دول حوض *النيل* بعدم القيام بأي مشروعات على نهر *النيل* بغير اتفاق مسبق مع *مصر*"},
+            {"id": 59, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (اقتصر اهتمام مصر بالكشوف الجغرافية الإفريقية على فترة حكم محمد علي)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "لم يقتصر الاهتمام على العصر الحديث بل كان لمصر دور مهم منذ عصر *المصريين القدماء* حيث قام الرحالة *حر-خوف* بأربع رحلات نحو الجنوب"},
+            {"id": 60, "type": "essay", "question": "بم تفسر: الأهمية الاستراتيجية لشبه جزيرة سيناء بالنسبة لقارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتعد ذات أهمية استراتيجية فمن خلالها تعرضت *مصر* للعديد من الحملات العسكرية ولذلك فإن الحفاظ على أمن شبه جزيرة *سيناء* ضرورة للحفاظ على الأمن القومي المصري والإفريقي"},
+            {"id": 61, "type": "mcq", "question": "تتنوع مظاهر السطح فوق هضبة شمال إفريقيا حيث يوجد بها جبل العوينات على الحدود بين مصر وليبيا و...", "options": ["تشاد", "السودان", "الجزائر", "النيجر"], "correctAnswer": 1, "explanation": "تتنوع مظاهر السطح فوق الهضبة فنجد الجبال مثل جبل *العوينات* على الحدود بين *مصر* و *ليبيا* و *السودان*"},
+            {"id": 62, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تنحدر الهضبة الجنوبية بشدة نحو السواحل الغربية لقارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تقع جنوب القارة، وتنحدر بشدة نحو السواحل *الشرقية* ويوجد في الجزء الشرقي منها الأخدود الإفريقي العظيم"},
+            {"id": 63, "type": "essay", "question": "بم تفسر: تكون الجليد فوق قمة جبل كلمنجارو رغم وقوعه بالمنطقة الاستوائية؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nيُعد *كلمنجارو* أعلى قمة جبلية في إفريقيا مما أدى إلى تكون الجليد فوق قمته رغم وقوعه بالمنطقة *الاستوائية* الحارة بسبب شدة الارتفاع"},
+            {"id": 64, "type": "mcq", "question": "تمتد قارة إفريقيا بين خطي طول 17 غرباً و...", "options": ["51 شرقاً", "37 شمالاً", "34 جنوباً", "23 شرقاً"], "correctAnswer": 0, "explanation": "تقع قارة إفريقيا بين دائرتي عرض 37 30 شمالا و 34 30 جنوبا، وبين خطي طول *51* شرقا و *17* غربا"},
+            {"id": 65, "type": "essay", "question": "ما المقصود بمفهوم الحضارة؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nمجموع الإنتاج *الثقافي* مثل العادات والتقاليد والعلوم والفنون والقيم والإنتاج *المادي* مثل القلاع والمباني والقصور وهو ما يميز مجتمعاً عن غيره"},
+            {"id": 66, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يعد جبل شايب البنات أعلى قمة جبلية في سلسلة جبال البحر الأحمر في مصر)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تمتد جبال البحر الأحمر في *مصر* و *السودان* و *إريتريا* ويُعد جبل *شايب البنات* في مصر أعلى قمة جبلية في تلك السلسلة"},
+            {"id": 67, "type": "mcq", "question": "من السهول الساحلية التي تضيق في بلاد المغرب العربي بسبب اقتراب جبال أطلس من الساحل...", "options": ["سهول المحيط الأطلنطي", "سهول البحر الأحمر", "سهول المحيط الهندي", "سهول البحر المتوسط"], "correctAnswer": 3, "explanation": "سهول *البحر المتوسط* تتسع في شمال *مصر* وتضيق في بلاد *المغرب العربي* بسبب اقتراب جبال *أطلس* من الساحل"},
+            {"id": 68, "type": "essay", "question": "ماذا يحدث إذا: كانت هضبة البحيرات الاستوائية تنحدر من الشمال إلى الجنوب؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- سيتجه انحدار المياه نحو *الجنوب* بدلاً من الشمال.\n2- لن تصل مياه منابع هضبة *البحيرات الاستوائية* إلى نهر *النيل* في *مصر* و *السودان*"},
+            {"id": 69, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (اتجهت رحلة المستكشف فاسكو دي جاما إلى الهند عن طريق دوران حول إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "استطاع المستكشف *فاسكو دي جاما* أن يبحر من *أوروبا* إلى *الهند* عن طريق رأس *الرجاء الصالح* بالدوران حول إفريقيا"},
+            {"id": 70, "type": "mcq", "question": "اشتهرت حضارة كوش بعدة صناعات وحرف منها زراعة وتعدين وتجارة...", "options": ["الزجاج والفخار", "العاج والبخور", "الأخشاب والحرير", "التوابل والعطور"], "correctAnswer": 1, "explanation": "اشتهرت بتجارة *العاج* و *البخور* و *الحديد* و *الذهب* إلى جانب حرفتي الزراعة والتعدين"},
+            {"id": 71, "type": "essay", "question": "قارن بين: هضبة البحيرات الاستوائية وهضبة الحبشة من حيث الأهمية بالنسبة لمصر.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- هضبة *البحيرات الاستوائية*: تمثل المنابع *الدائمة* لنهر النيل وتتدفق مياهها طوال العام.\n2- هضبة *الحبشة*: تمثل المنابع *الموسمية* التي تمد النيل بالمياه صيفاً وتتميز بخصوبة تربتها التي نقلت الطمي إلى *مصر*"},
+            {"id": 72, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتبر الصحراء الكبرى في هضبة شمال إفريقيا أكبر صحاري العالم)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تظهر بها *الصحراء الكبرى* التي تُعد أكبر صحاري العالم وتقع فوق هضبة *شمال إفريقيا*"},
+            {"id": 73, "type": "mcq", "question": "يصب نهر النيل في نهايته شمالاً في مسطح مائي هو...", "options": ["البحر الأحمر", "المحيط الأطلنطي", "البحر المتوسط", "المحيط الهندي"], "correctAnswer": 2, "explanation": "يساعده على الجريان تجاه الشمال حتى المصب في *البحر المتوسط*"},
+            {"id": 74, "type": "essay", "question": "بم تفسر: الأهمية التجارية لحضارة كوش؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nكانت مملكة كوش مركزاً للتجارة، وأقامت علاقات تجارية مع *مصر* شمالاً ومملكة *أكسوم* شرقاً، واشتهرت بتجارة *العاج* و *البخور* و *الحديد* و *الذهب*"},
+            {"id": 75, "type": "mcq", "question": "من البحيرات العذبة التي تكثر في هضبة البحيرات الاستوائية بحيرة...", "options": ["فيكتوريا", "تانا", "تشاد", "ناصر"], "correctAnswer": 0, "explanation": "تعلوها القمم الجبلية البركانية، كما تكثر بها البحيرات العذبة مثل بحيرة *فيكتوريا*"},
+            {"id": 76, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (قامت مصر بإنشاء خزان جبل الأولياء في السودان لتوليد الطاقة الكهربائية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "من الجهود التي قامت بها *مصر* دفع تكاليف إنشاء خزان *جبل الأولياء* في *السودان* لتوليد الطاقة *الكهربائية*"},
+            {"id": 77, "type": "mcq", "question": "تمتد في جنوب قارة إفريقيا جبال بركانية تعرف باسم جبال...", "options": ["دراكنزبرج", "الكاب", "أطلس", "البحر الأحمر"], "correctAnswer": 0, "explanation": "توجد أيضاً جبال *دراكنزبرج* في جنوب القارة وهي تصنف ضمن الجبال *البركانية*"},
+            {"id": 78, "type": "essay", "question": "ما النتائج المترتبة على: الموقع الاستراتيجي لمدينة قرطاج في منتصف طريق التجارة؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى استقلال مدينة *قرطاج* عن *فينيقيا* وكونت مملكة قوية حكمت معظم ساحل شمال *إفريقيا* وبعض جزر البحر *المتوسط*"},
+            {"id": 79, "type": "mcq", "question": "تعد قارة إفريقيا ثاني أكبر قارات العالم من حيث المساحة بعد قارة...", "options": ["آسيا", "أوروبا", "أمريكا الشمالية", "أمريكا الجنوبية"], "correctAnswer": 0, "explanation": "تعد قارة *إفريقيا* ثاني أكبر قارات العالم بعد قارة *آسيا* من حيث المساحة"},
+            {"id": 80, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تقتصر الأهمية الاقتصادية لجبال إفريقيا على استخراج المعادن فقط)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تساهم المناطق الجبلية في دعم نشاط *السياحة* لتميزها بمناظر خلابة إلى جانب نشاط *التعدين* و *الصناعة*"},
+            {"id": 81, "type": "essay", "question": "ما هي أهم المبادئ التي نصت عليها اتفاقية 2015م بين مصر وإثيوبيا والسودان؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nاتفقت الدول الثلاث على عدة مبادئ منها *التعاون* و *التنمية* وعدم التسبب في ضرر والاستخدام المنصف والمناسب لمياه نهر *النيل*"},
+            {"id": 82, "type": "mcq", "question": "يفصل البحر المتوسط بين قارة إفريقيا وقارة...", "options": ["أوروبا", "آسيا", "أستراليا", "أمريكا الشمالية"], "correctAnswer": 0, "explanation": "يحدها من الشمال البحر *المتوسط* الذي يفصلها عن قارة *أوروبا*"},
+            {"id": 83, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعاني قارة إفريقيا من الفقر بسبب ندرة ثرواتها الطبيعية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تعاني *إفريقيا* من الفقر رغم ما تملكه من ثروات طبيعية متعددة وذلك بسبب تصارع الدول *الاستعمارية* على نهب خيراتها"},
+            {"id": 84, "type": "essay", "question": "دلل على: حرص المصريون القدماء على توطيد العلاقات التجارية مع الحضارات الإفريقية المجاورة.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nحرصوا على توطيد العلاقات التجارية مع الحضارات المجاورة لهم كحضارة *كوش* وبلاد *بونت*، وكان للحضارة *المصرية* القديمة تأثير على بعض الحضارات الإفريقية"},
+            {"id": 85, "type": "mcq", "question": "قامت مصر بجهود لتطهير بحيرة فيكتوريا وبحيرة كيوجا من...", "options": ["الحشائش والنباتات", "الأملاح المعدنية", "الرواسب الطينية", "المخلفات الصناعية"], "correctAnswer": 0, "explanation": "من الجهود التي قامت بها *مصر* تطهير بحيرة *فيكتوريا* و *كيوجا* من *الحشائش* و *النباتات*"},
+            {"id": 86, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتبر السهول الساحلية للمحيط الأطلنطي سهولاً واسعة غنية بحقولها الزراعية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "سهول المحيط *الأطلنطي* تقع غرب القارة، وتتميز بأنها سهول واسعة غنية بحقولها *الزراعية*"},
+            {"id": 87, "type": "essay", "question": "ما المقصود بمفهوم الاقتصاد الأخضر؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nهو الاقتصاد الصديق للبيئة الذي يستهدف تحقيق نمو اقتصادي مستدام مع الحفاظ على *البيئة* وتحقيق العدالة *الاجتماعية*"},
+            {"id": 88, "type": "mcq", "question": "جزر القمر هي دولة عربية إفريقية تتكون من عدة جزر وتقع شمال غرب جزيرة...", "options": ["مدغشقر", "سيشل", "موريشيوس", "سقطرى"], "correctAnswer": 0, "explanation": "*جزر القمر* التي تقع شمال غرب جزيرة *مدغشقر*"},
+            {"id": 89, "type": "mcq", "question": "تقترب قارة إفريقيا من قارة آسيا عند مضيق...", "options": ["جبل طارق", "موزمبيق", "باب المندب", "هرمز"], "correctAnswer": 2, "explanation": "تقترب من قارة *آسيا* عند مضيق *باب المندب* وتتصل بها عن طريق شبه جزيرة *سيناء*"},
+            {"id": 90, "type": "essay", "question": "ما العلاقة بين: المرتفعات والسهول الساحلية في قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nيختلف اتساع السهول الساحلية في القارة من منطقة لأخرى بحسب اقتراب أو ابتعاد *المرتفعات* من الساحل"},
+            {"id": 91, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (أدى الموقع الجغرافي لقارة إفريقيا إلى تحكمها في أهم طرق الملاحة العالمية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "أدى الموقع الجغرافي لقارة *إفريقيا* إلى تحكمها في أهم طرق الملاحة *العالمية* وتشرف على ممرات مائية مهمة"},
+            {"id": 92, "type": "mcq", "question": "دولة عربية إفريقية تتكون من عدة جزر تقع شمال غرب جزيرة مدغشقر...", "options": ["جزر القمر", "جزر الكناري", "جزر سيشل", "جزر موريشيوس"], "correctAnswer": 0, "explanation": "تتضمن إفريقيا عدداً من الجزر مثل جزيرة *مدغشقر* و *جزر القمر* التي تقع شمال غرب جزيرة *مدغشقر*"},
+            {"id": 93, "type": "essay", "question": "بم تفسر: الأهمية الكبيرة لهضبة البحيرات الاستوائية بالنسبة لمصر؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتعتبر بمثابة المنابع *الدائمة* لنهر *النيل* وتتميز بسقوط الأمطار الغزيرة طوال العام"},
+            {"id": 94, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتبر سهول وادي النيل من السهول الساحلية في قارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "سهول وادي *النيل* التي تمتد في *مصر* و *السودان* تعتبر من السهول *الفيضية* الخصبة الصالحة للزراعة وليست ساحلية"},
+            {"id": 95, "type": "mcq", "question": "تمتد جبال أطلس في سلسلتين متوازيتين على طول الساحل...", "options": ["الشمالي الشرقي", "الشمالي الغربي", "الجنوبي الشرقي", "الجنوبي الغربي"], "correctAnswer": 1, "explanation": "جبال *أطلس* تمتد في سلسلتين متوازيتين على طول الساحل *الشمالي الغربي* للقارة من جنوب *المغرب* حتى *تونس*"},
+            {"id": 96, "type": "essay", "question": "أيد بالدليل الجغرافي: تنوع مظاهر السطح فوق هضبة شمال إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nنجد فوقها الجبال مثل جبل *العوينات* كما نجد المنخفضات كمنخفض *القطارة* والعديد من الواحات مثل واحة *سيوة*"},
+            {"id": 97, "type": "mcq", "question": "تمتد قارة إفريقيا فلكياً وتمر بها في الأطراف الجنوبية دائرة عرض رئيسية هي...", "options": ["دائرة الاستواء", "مدار السرطان", "مدار الجدي", "الدائرة القطبية"], "correctAnswer": 2, "explanation": "تمر بها ثلاث دوائر عرض رئيسية هي دائرة *الاستواء* في المنتصف و *مدار السرطان* في الشمال و *مدار الجدي* في الجنوب"},
+            {"id": 98, "type": "essay", "question": "ما النتائج المترتبة على: وقوع نحو ثلثي مساحة قارة إفريقيا في النصف الشمالي للكرة الأرضية؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى امتداد القارة بين أكثر من *70* دائرة عرضية ومرور دوائر عرض رئيسية مثل دائرة *الاستواء* ومدار *السرطان* في هذا النصف"},
+            {"id": 99, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تقع هضبة الحبشة في الجزء الغربي من قارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تعد هضبة *الحبشة* أعلى هضاب القارة وتقع في الجزء *الشرقي* منها"},
+            {"id": 100, "type": "mcq", "question": "استطاع الرحالة العربي ابن بطوطة أن يخترق الصحراء الكبرى من الشمال إلى الجنوب حتى وصل إلى...", "options": ["السودان", "مالي", "جزر القمر", "الحبشة"], "correctAnswer": 1, "explanation": "استطاع *ابن بطوطة* أن يخترق الصحراء الكبرى من الشمال إلى الجنوب حتى وصل إلى *مالي*"},
+            {"id": 101, "type": "essay", "question": "بم تفسر: يُعد البحر الأحمر وخليج العقبة جزءاً من الأخدود الإفريقي العظيم؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nلأن الأخدود الإفريقي العظيم يتكون من مجموعة انكسارات طولية تتجه بشكل عام من *الجنوب* إلى *الشمال* في شرق القارة"},
+            {"id": 102, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتمد سهول البحر المتوسط في إفريقيا على مياه الأمطار الصيفية للزراعة)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تتميز بوجود النباتات الطبيعية والمحاصيل الزراعية التي تعتمد على الأمطار *الشتوية*"},
+            {"id": 103, "type": "mcq", "question": "من أوائل الرحالة العرب الذين زاروا إفريقيا وكتبوا عنها...", "options": ["ابن بطوطة", "المسعودي", "ابن خلدون", "الإدريسي"], "correctAnswer": 1, "explanation": "كان *المسعودي* من أوائل الرحالة *العرب* الذين زاروا إفريقيا وكتبوا عنها"},
+            {"id": 104, "type": "essay", "question": "أيد بالدليل: وهب الله قارة إفريقيا موقعاً متميزاً ساعد على قيام حضارات عريقة.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nنشأت على أرض قارتنا الإفريقية العديد من أقدم الحضارات مثل الحضارة *المصرية* القديمة، وحضارة *كوش* في *السودان*، وحضارة *أكسوم*، وحضارة *قرطاج* في *تونس*"},
+            {"id": 105, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تقع مصر في الركن الشمالي الشرقي لقارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تقع *مصر* في الركن *الشمالي الشرقي* لقارة إفريقيا وهي واحدة من أكبر دول القارة وأهمها"},
+            {"id": 106, "type": "mcq", "question": "نهر يصب في بحيرة فيكتوريا من جهة الغرب ويعد من أهم مصادر مياهها...", "options": ["نهر السوباط", "نهر كاجيرا", "نهر النيجر", "نهر عطبرة"], "correctAnswer": 1, "explanation": "يصب فيها من الغرب نهر *كاجيرا* الذي يُعد من أهم مصادر مياه بحيرة *فيكتوريا*"},
+            {"id": 107, "type": "essay", "question": "دلل على: تعددت الممالك الإسلامية التي نشأت في قارة إفريقيا نتيجة للرحلات العربية.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتعددت الممالك *الإسلامية* على السواحل *الشرقية* للقارة وامتدت إلى هضبة *البحيرات الاستوائية*، كما تكونت بعض الممالك في *غرب إفريقيا*"},
+            {"id": 108, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (اقتصر دور الأوروبيين في اكتشاف إفريقيا على الرحالة البرتغاليين فقط)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "توالت الكشوف للقارة الإفريقية من *الإنجليز* و *الفرنسيين* و *الهولنديين* بالإضافة إلى دور *البرتغاليين*"},
+            {"id": 109, "type": "mcq", "question": "من الهضاب التي تقع في الجزء الجنوبي من قارة إفريقيا ويوجد بها الأخدود الإفريقي العظيم...", "options": ["الهضبة الجنوبية", "هضبة الحبشة", "هضبة الشطوط", "هضبة البحيرات"], "correctAnswer": 0, "explanation": "تقع *الهضبة الجنوبية* جنوب القارة، ويوجد في الجزء *الشرقي* منها *الأخدود الإفريقي العظيم*"},
+            {"id": 110, "type": "essay", "question": "قارن بين: المنابع الدائمة والمنابع الموسمية لنهر النيل من حيث موسم سقوط الأمطار.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- المنابع *الدائمة*: تتميز بسقوط الأمطار الغزيرة *طوال العام*.\n2- المنابع *الموسمية*: تتميز بسقوط الأمطار *الصيفية* الغزيرة"},
+            {"id": 111, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يتميز نهر النيل بأنه ثنائي المنبع كما أشار العالم جمال حمدان)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "أشار العالم *جمال حمدان* إلى أن نهر النيل *ثنائي المنبع*، وهذا سبب استدامته ووصوله إلى *مصر*"},
+            {"id": 112, "type": "mcq", "question": "تم انتخاب مصر لرئاسة الاتحاد الإفريقي كفرصة قوية لتعميق دورها الريادي في عام...", "options": ["2015م", "2019م", "2020م", "2063م"], "correctAnswer": 1, "explanation": "كان انتخاب مصر لرئاسة *الاتحاد الإفريقي* عام *2019* فرصة قوية لتعميق دور مصر *الريادي* في قارة إفريقيا"},
+            {"id": 113, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تكونت جبال الكاب في إفريقيا نتيجة للحركات الانكسارية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "جبال *الكاب* جنوب القارة تصنف من الجبال *الالتوائية* وليست الانكسارية"},
+            {"id": 114, "type": "essay", "question": "ما رأيك في: قيام دول حوض النيل بتأسيس تجمع الأندوجو عام 1983م؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأرى أنها خطوة ممتازة لتعزيز *الإخاء* بين الدول، ويهدف إلى *التشاور* والتنسيق ودعم *التعاون* بين دول الحوض والحفاظ على المصالح *المشتركة*"},
+            {"id": 115, "type": "mcq", "question": "من الأنهار الإفريقية التي لا تصب في البحر المتوسط...", "options": ["نهر النيل", "نهر الكونغو", "فرع دمياط", "فرع رشيد"], "correctAnswer": 1, "explanation": "نهر *النيل* يصب في البحر *المتوسط* بينما بقية الأنهار كـ *النيجر* و *الكونغو* لها مصبات مختلفة في المحيطات"},
+            {"id": 116, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تسعى الدول الإفريقية لتطبيق الاقتصاد الأخضر لحماية المحيطات والبحار)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "استثمار الموارد *المائية* للمحيطات والبحار بشكل مستدام يُعرف بـ *الاقتصاد الأزرق* وليس الأخضر"},
+            {"id": 117, "type": "essay", "question": "ما النتائج المترتبة على: إنشاء البرتغاليين الموانئ والمراكز التجارية على طول طريق رأس الرجاء الصالح؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى تأمين حركة *الملاحة* و *التجارة* ومحاولة الوصول إلى *الهند* عن طريق الدوران حول *إفريقيا*"},
+            {"id": 118, "type": "mcq", "question": "كان الذهب والعاج والعطور والتوابل من أبرز الصادرات ذات القيمة الاقتصادية لحضارة...", "options": ["كوش", "أكسوم", "قرطاج", "المصرية القديمة"], "correctAnswer": 1, "explanation": "كان *الذهب* و *العاج* و *العطور* و *التوابل* من أبرز صادرات حضارة *أكسوم* وأعلاها قيمة اقتصادية"},
+            {"id": 119, "type": "essay", "question": "ما النتائج المترتبة على: استقرار المصري القديم على ضفاف نهر النيل؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى أنه عرف حرفة *الزراعة* واستأنس *الحيوانات* وأنشأ القرى ثم *المدن* والأقاليم واستطاع توحيد البلاد"},
+            {"id": 120, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تعتبر بحيرة فيكتوريا ثاني أكبر البحيرات الطبيعية العذبة في العالم)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "بحيرة *فيكتوريا* هي ثاني أكبر البحيرات الطبيعية *العذبة* في العالم ويصب فيها من الغرب نهر *كاجيرا*"},
+            {"id": 121, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يفصل المحيط الهندي بين قارة إفريقيا وقارتي أمريكا الشمالية والجنوبية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "يحدها من الغرب المحيط *الأطلنطي* الذي يفصلها عن قارتي *أمريكا الشمالية* و *أمريكا الجنوبية*"},
+            {"id": 122, "type": "essay", "question": "ما مقترحاتك لـ: تفعيل المادة 21 من اتفاقية قانون استخدام المجاري المائية الدولية؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nالعمل الجاد على منع *تلوث* المجرى المائي وتخفيض نسب التلوث والعمل على *مكافحته* لضمان التنمية المستدامة"},
+            {"id": 123, "type": "mcq", "question": "يبلغ إجمالي عدد الدول في قارة إفريقيا...", "options": ["50 دولة", "54 دولة", "60 دولة", "45 دولة"], "correctAnswer": 1, "explanation": "قارة إفريقيا تضم *54* دولة مختلفة في المساحة، وتعد *الجزائر* أكبر دول القارة"},
+            {"id": 124, "type": "essay", "question": "أيد بالدليل التاريخي: كان لمصر علاقات مع إفريقيا منذ عصور ما قبل التاريخ.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nيشير إلى ذلك تشابه الرسوم الموجودة في الكهوف والتي تعبر عن مظاهر حياة الإنسان مثل كهف *الوحوش* في الصحراء الغربية بمصر، وكهوف *الطاسيلي* بالجزائر"},
+            {"id": 125, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يعتبر جبل العوينات من الجبال البركانية في قارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "يوجد جبل *العوينات* فوق هضبة شمال إفريقيا، بينما الجبال *البركانية* هي جبل *كينيا* و *كلمنجارو*"},
+            {"id": 126, "type": "mcq", "question": "تتميز سهول البحر الأحمر الساحلية في إفريقيا بأنها غنية بـ...", "options": ["الثروات المعدنية ومصادر الطاقة", "المحاصيل الزراعية الشتوية", "الغابات المدارية المطيرة", "البحيرات العذبة الواسعة"], "correctAnswer": 0, "explanation": "سهول *البحر الأحمر* هي سهول ساحلية ضيقة بسبب اقتراب الجبال، وهي غنية بالثروات *المعدنية* ومصادر *الطاقة*"},
+            {"id": 127, "type": "essay", "question": "ماذا يحدث إذا: لم تقترب قارة إفريقيا من قارة أوروبا عند مضيق جبل طارق؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nلقلت الأهمية *الاستراتيجية* للموقع الجغرافي لقارة *إفريقيا* وصعب الاتصال بين القارتين عبر هذا *الممر* المائي المهم"},
+            {"id": 128, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تفقد المنابع الدائمة لنهر النيل معظم مياهها قبل وصولها لمصر بسبب البخر والمستنقعات)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "لا يصل منها سوى كميات قليلة إلى *مصر*، بسبب *المستنقعات* وزيادة *البخر* رغم غزارة أمطارها طوال العام"},
+            {"id": 129, "type": "mcq", "question": "أول مستكشف أوروبي أبحر حول الطرف الجنوبي من إفريقيا (رأس الرجاء الصالح) هو...", "options": ["فاسكو دي جاما", "بارتولوميو دياس", "جون سبيك", "هنري الملاح"], "correctAnswer": 1, "explanation": "كان المستكشف *بارتولوميو دياس* أول أوروبي أبحر حول الطرف الجنوبي من إفريقيا الذي يُسمى برأس *الرجاء الصالح*"},
+            {"id": 130, "type": "essay", "question": "ما رأيك في: إطلاق الاتحاد الإفريقي وثيقة أجندة 2063؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأرى أنها خطوة ممتازة لبناء قارة *متكاملة* ومزدهرة يسودها *السلام* ويمسك مواطنوها بزمام قيادتها لتحقيق التنمية *المستدامة*"},
+            {"id": 131, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (اعتمدت حضارة أكسوم بشكل أساسي على مياه نهر النيل في زراعتها)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "ظهرت حضارة *أكسوم* في شرق إفريقيا وكان للنشاط *التجاري* دور بارز في نشأتها لتكونها كمركز تجاري وملتقى للطرق التجارية"},
+            {"id": 132, "type": "mcq", "question": "من الأنهار التي تجري في قارة إفريقيا وساهمت في تكوين السهول الفيضية الخصبة الصالحة للزراعة نهر...", "options": ["الكونغو", "كاجيرا", "السوباط", "عطبرة"], "correctAnswer": 0, "explanation": "يجري في قارة إفريقيا عدد من الأنهار، مثل نهر *النيل*، ونهر *النيجر*، ونهر *الكونغو*، وقد ساعدت على تكوين السهول الفيضية"},
+            {"id": 133, "type": "essay", "question": "قارن بين: جبال البحر الأحمر وجبال أطلس من حيث سبب التكوين.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- جبال *البحر الأحمر*: تكونت نتيجة حركات *انكسارية*.\n2- جبال *أطلس*: تتصنف ضمن الجبال *الالتوائية*"},
+            {"id": 134, "type": "mcq", "question": "الحضارة الإفريقية التي تركزت في بدايتها بمدينة نبتة ثم انتقلت إلى مدينة مروي هي حضارة...", "options": ["كوش", "أكسوم", "قرطاج", "المصرية"], "correctAnswer": 0, "explanation": "كانت في بدايتها متمركزة في مدينة *نبتة* ثم انتقلت إلى *مروي* وكانت مملكة *كوش* مركزاً للتجارة"},
+            {"id": 135, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يصب نهر كاجيرا في بحيرة فيكتوريا من جهة الشرق)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "يصب فيها من *الغرب* نهر *كاجيرا* الذي يُعد من أهم مصادر مياه بحيرة *فيكتوريا*"},
+            {"id": 136, "type": "essay", "question": "بم تفسر: الأهمية الاقتصادية لموقع قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى الموقع الجغرافي لقارة *إفريقيا* وموقعها الفلكي إلى تنوع *المناخ* وبالتالي تنوع النباتات *الطبيعية* و *الحيوانات* والمحاصيل *الزراعية*"},
+            {"id": 137, "type": "mcq", "question": "أول مستكشف أطلق على بحيرة فيكتوريا أنها منبع نهر النيل هو الرحالة...", "options": ["جون سبيك", "فاسكو دي جاما", "بارتولوميو دياس", "هنري الملاح"], "correctAnswer": 0, "explanation": "وصل الرحالة *جون سبيك* إلى بحيرة *فيكتوريا* وهو أول من أطلق عليها منبع *النيل*"},
+            {"id": 138, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (أطلقت قمة الاتحاد الإفريقي وثيقة أجندة 2063 بمناسبة مرور خمسين عاماً على تأسيسه)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "في عام *2013* وبمناسبة مرور خمسين عاماً على تأسيس *الاتحاد الإفريقي*، أطلقت قمة الاتحاد الرؤية الإفريقية وثيقة أجندة *2063*"},
+            {"id": 139, "type": "mcq", "question": "تنتشر الواحات في قارة إفريقيا مثل واحة سيوة والجوف فوق هضبة...", "options": ["شمال إفريقيا", "الحبشة", "البحيرات الاستوائية", "الجنوبية"], "correctAnswer": 0, "explanation": "نجد المنخفضات كمنخفض *القطارة* والعديد من الواحات مثل واحة *سيوة* في *مصر* و *الجوف* في *ليبيا* فوق هضبة *شمال إفريقيا*"},
+            {"id": 140, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تمتلك قارة إفريقيا مسطحات مائية غنية بمصادر الطاقة والثروات المعدنية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تطل قارة *إفريقيا* على بحار ومحيطات واسعة تحتوي على العديد من الثروات *الطبيعية* وتتميز بتنوع الكائنات البحرية وغناها بمصادر *الطاقة* والثروات *المعدنية*"},
+            {"id": 141, "type": "mcq", "question": "يمتد الأخدود الإفريقي العظيم في قارة إفريقيا في الجزء...", "options": ["الشرقي", "الغربي", "الشمالي", "الأوسط"], "correctAnswer": 0, "explanation": "ويوجد في الجزء *الشرقي* من الهضبة *الأخدود الإفريقي العظيم*، الذي يتكون من مجموعة انكسارات طولية"},
+            {"id": 142, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يعتبر منخفض القطارة من أبرز المنخفضات الموجودة في هضبة الحبشة)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "نجد المنخفضات كمنخفض *القطارة* والعديد من الواحات فوق هضبة *شمال إفريقيا* وليس هضبة *الحبشة*"},
+            {"id": 143, "type": "essay", "question": "ماذا يحدث إذا: لم يستقر المصري القديم على ضفاف نهر النيل؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- لم يعرف حرفة *الزراعة* ويستأنس *الحيوانات*.\n2- لم يقم بتأسيس القرى ثم *المدن* والأقاليم ولم يقم بتكوين الأسرات الحاكمة"},
+            {"id": 144, "type": "mcq", "question": "تقع هضبة الشطوط في قارة إفريقيا وتنحصر بين سلسلتي جبال أطلس في دولة...", "options": ["تونس", "المغرب", "الجزائر", "ليبيا"], "correctAnswer": 2, "explanation": "تمتد جبال *أطلس* في سلسلتين متوازيتين وتحصران بينهما هضبة *الشطوط* في *الجزائر*"},
+            {"id": 145, "type": "essay", "question": "بم تفسر: الأهمية الاقتصادية لسهول المحيط الأطلنطي في إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتتميز بأنها سهول واسعة غنية بحقولها *الزراعية*"},
+            {"id": 146, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يحد قارة إفريقيا من جهة الغرب المحيط الهندي)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "يحدها من الغرب المحيط *الأطلنطي* الذي يفصلها عن قارتي أمريكا الشمالية وأمريكا الجنوبية، بينما يحدها من الشرق المحيط *الهندي*"},
+            {"id": 147, "type": "mcq", "question": "من الروافد الموسمية التي تنبع من هضبة الحبشة وتمد نهر النيل بمياهه وتساعده على الجريان تجاه الشمال نهر...", "options": ["الكونغو", "النيجر", "عطبرة", "كاجيرا"], "correctAnswer": 2, "explanation": "النيل *الأزرق* ونهر *عطبرة* كلاهما يمد النيل بمياهه ويساعده على الجريان تجاه الشمال حتى المصب"},
+            {"id": 148, "type": "essay", "question": "ما النتائج المترتبة على: سقوط الأمطار الغزيرة طوال العام على هضبة البحيرات الاستوائية؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى أن مياهها تتدفق *طوال العام* وتعتبر هي المنابع *الدائمة* لنهر *النيل*"},
+            {"id": 149, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يعتبر جبل توبقال أعلى قمة جبلية في قارة إفريقيا بأكملها)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "يُعد جبل *كلمنجارو* أعلى قمة جبلية في إفريقيا، بينما جبل *توبقال* هو أعلى قمة في سلسلة جبال *أطلس*"},
+            {"id": 150, "type": "mcq", "question": "أول من أسس مدينة قرطاج على ساحل البحر المتوسط لتأمين رحلاتهم التجارية هم...", "options": ["المصريون القدماء", "الفينيقيون", "الكوشيون", "الأكسوميون"], "correctAnswer": 1, "explanation": "يرجع الفضل إلى *الفينيقيين* في تأسيس مدينة *قرطاج* على البحر المتوسط لتأمين رحلاتهم التجارية من *فينيقيا* إلى *إسبانيا*"},
+            {"id": 151, "type": "essay", "question": "دلل على: حرص الدول الإفريقية على استثمار مسطحاتها المائية بشكل مستدام.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتطبيقاً لأهداف الاقتصاد *الأزرق* للقضاء على *الفقر* وتحقيق الاكتفاء الذاتي من الغذاء مع المحافظة على النظام *البيئي*"},
+            {"id": 152, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (أنشأت مصر مركزاً للبحوث المائية في تنزانيا ضمن جهودها لتنمية حوض النيل)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "من الجهود التي قامت بها مصر حفر عشرات الآبار في *كينيا*، وإنشاء مركز للبحوث المائية في *تنزانيا*"},
+            {"id": 153, "type": "mcq", "question": "عرف المصري القديم الزراعة واستأنس الحيوانات عندما استقر على ضفاف نهر...", "options": ["الكونغو", "النيجر", "النيل", "السنغال"], "correctAnswer": 2, "explanation": "أقام المصريون القدماء حضارة عريقة على ضفاف *النيل*، حيث استقر المصري القديم وعرف حرفة *الزراعة*"},
+            {"id": 154, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تمتد جبال البحر الأحمر في مصر والسودان والمغرب)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تمتد جبال *البحر الأحمر* في *مصر* و *السودان* و *إريتريا* على ساحل البحر الأحمر، وليس في المغرب"},
+            {"id": 155, "type": "essay", "question": "ماذا يحدث إذا: لم يتم حفر قناة السويس في مصر؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nلقلت الأهمية *الاستراتيجية* والتجارية لموقع قارة *إفريقيا* و *مصر*، وصعبت حركة الملاحة والتجارة *العالمية* بين الشرق والغرب"},
+            {"id": 156, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (نصت المادة 7 من اتفاقية استخدام المجاري المائية على الالتزام بعدم التسبب في ضرر لأي دولة)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "المادة *7*: الالتزام بعدم التسبب في ضرر لأي دولة من دول المجرى المائي"},
+            {"id": 157, "type": "mcq", "question": "انتقلت عبر شبه جزيرة سيناء بعض الثقافات والحضارات من قارة آسيا إلى إفريقيا ومنها الحضارة...", "options": ["المصرية القديمة", "الإسلامية", "الفينيقية", "الكوشية"], "correctAnswer": 1, "explanation": "تعد شبه جزيرة سيناء ذات أهمية حضارية كبيرة، حيث انتقلت عن طريقها بعض الثقافات والحضارات من *آسيا* إلى *إفريقيا* مثل الحضارة *الإسلامية*"},
+            {"id": 158, "type": "essay", "question": "أيد بالدليل: اهتمام مصر بالتنمية المائية على مجرى النيل الأزرق في السودان.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتمثل ذلك في قيام *مصر* بإنشاء خزان *سنار* على مجرى النيل *الأزرق* لصالح *السودان* ضمن جهودها للتنمية المستدامة"},
+            {"id": 159, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تمتد سهول البحر الأحمر الساحلية في دولتي مصر والسودان ودولة إريتريا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "سهول البحر *الأحمر* تقع شرق القارة وتمتد في *مصر* و *السودان* و *إريتريا* وهي سهول ساحلية ضيقة"},
+            {"id": 160, "type": "mcq", "question": "من حكام مصر في العصر الحديث الذي اهتم باكتشاف منابع النيل ووصل حكمه إلى جنوب دائرة الاستواء...", "options": ["محمد علي باشا", "الخديو إسماعيل", "الملك نخاو الثاني", "الخديو توفيق"], "correctAnswer": 1, "explanation": "اهتم حفيده الخديو *إسماعيل* باكتشاف منابع *النيل* ووصل حكمه إلى جنوب دائرة *الاستواء*"},
+            {"id": 161, "type": "essay", "question": "بم تفسر: الأهمية التجارية لحضارة أكسوم قديماً؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nكانت بمثابة مركز *تجاري* قوي وملتقى للعديد من الطرق *التجارية*، وكان *الذهب* و *العاج* و *العطور* و *التوابل* من أبرز صادراتها"},
+            {"id": 162, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يُعد خليج العقبة وخليج عدن جزءاً من الأخدود الإفريقي العظيم)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "الأخدود الإفريقي العظيم يتكون من مجموعة انكسارات طولية، ويُعد البحر *الأحمر* وخليجا *عدن* و *العقبة* أجزاء منه"},
+            {"id": 163, "type": "mcq", "question": "أي من المظاهر التضاريسية التالية في إفريقيا تكونت نتيجة حدوث حركات انكسارية؟", "options": ["جبال أطلس", "جبال الكاب", "جبال البحر الأحمر", "جبل كينيا"], "correctAnswer": 2, "explanation": "الجبال *الانكسارية* في قارة إفريقيا تتمثل في جبال *البحر الأحمر* التي تمتد شرق القارة"},
+            {"id": 164, "type": "essay", "question": "أيد بالدليل التاريخي: سعت مصر لتنفيذ مشروعات لتوليد الطاقة المائية والمحافظة على المياه في دولة أوغندا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nقامت *مصر* بجهود لتحقيق التنمية المستدامة ضمن حوض النيل، منها إنشاء سد *أوين* في دولة *أوغندا*"},
+            {"id": 165, "type": "mcq", "question": "الدولة التي كانت صاحبة الفكرة في إنشاء تجمع الأندوجو لدول حوض النيل عام 1983م هي...", "options": ["إثيوبيا", "السودان", "أوغندا", "مصر"], "correctAnswer": 3, "explanation": "شكلت دول حوض النيل تجمعاً يُعرف باسم *الأندوجو*، وكانت *مصر* صاحبة فكرة إنشاء هذا التجمع للتشاور ودعم التعاون"},
+            {"id": 166, "type": "essay", "question": "ماذا يحدث إذا: لم تقترب جبال البحر الأحمر من الساحل الشرقي لإفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nلأصبحت السهول الساحلية للبحر *الأحمر* في *مصر* و *السودان* سهولاً *واسعة*، ولم تكن لتتميز بالضيق الذي هي عليه الآن"},
+            {"id": 167, "type": "mcq", "question": "تنحصر هضبة الشطوط في الجزائر بين سلسلتين متوازيتين من الجبال هي جبال...", "options": ["البحر الأحمر", "أطلس", "دراكنزبرج", "الكاب"], "correctAnswer": 1, "explanation": "جبال *أطلس* تمتد في سلسلتين متوازيتين على طول الساحل الشمالي الغربي للقارة، وتحصران بينهما هضبة *الشطوط* في *الجزائر*"},
+            {"id": 168, "type": "essay", "question": "ما العلاقة بين: الأنهار في إفريقيا والنشاط الزراعي؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nساعدت الأنهار مثل نهر *النيل* و *النيجر* على تكوين السهول *الفيضية* التي تتميز بخصوبة *تربتها* مما أدى إلى قيام حرفة *الزراعة*"},
+            {"id": 169, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تم توقيع اتفاقية عام 2015 بين مصر وإثيوبيا والسودان لتنظيم الاستفادة من مياه النيل)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "اتفقت *مصر* و *إثيوبيا* و *السودان* في اتفاقية عام *2015* على مبادئ *التعاون* والتنمية وعدم التسبب في *ضرر* والاستخدام المنصف للمياه"},
+            {"id": 170, "type": "mcq", "question": "الدولة العربية التي تصنف كأكبر دول قارة إفريقيا من حيث المساحة هي...", "options": ["مصر", "السودان", "الجزائر", "ليبيا"], "correctAnswer": 2, "explanation": "قارة إفريقيا تضم *54* دولة مختلفة في المساحة، وتعد *الجزائر* أكبر دول القارة الإفريقية من حيث المساحة"},
+            {"id": 171, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (امتد التأثير الحضاري للمصريين القدماء ليصل إلى منابع النيل الاستوائية وغرب إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "امتد التأثير الحضاري *المصري* إلى *غرب إفريقيا* ومنابع النيل *الاستوائية* كجزء من الكشوف الجغرافية القديمة"},
+            {"id": 172, "type": "essay", "question": "ما النتائج المترتبة على: الموقع الفلكي لقارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى موقعها *الفلكي* وامتدادها في أكثر من 70 دائرة عرضية إلى تنوع *المناخ*، وبالتالي تنوع النباتات *الطبيعية* و *الحيوانات* والمحاصيل *الزراعية*"},
+            {"id": 173, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تكونت تربة وادي النيل الخصبة في مصر والسودان من الطمي المنقول من هضبة البحيرات الاستوائية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تتميز بخصوبة تربتها التي تكونت من الطمي المنقول من هضبة *الحبشة* وليست هضبة *البحيرات الاستوائية*"},
+            {"id": 174, "type": "essay", "question": "دلل تاريخياً: استفاد الأوروبيون من إسهامات الجغرافيين العرب في الكشوف الجغرافية بقارة إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nاستفاد *البرتغاليون* مما كتبه *العرب* عن إفريقيا في رحلاتهم الاستكشافية وحاولوا الوصول إلى *الهند* عن طريق الدوران حول *إفريقيا*"},
+            {"id": 175, "type": "mcq", "question": "الرحلة الاستكشافية التي انتهت باكتشاف النيل الأبيض ورسم خريطة للنيل حتى جنوب السودان كانت في عهد...", "options": ["الملك نخاو الثاني", "الخديو إسماعيل", "محمد علي باشا", "الملك أحمس"], "correctAnswer": 2, "explanation": "في العصر الحديث أرسل *محمد علي باشا* رحلات لاكتشاف منابع النيل وانتهت باكتشاف النيل *الأبيض* ورسم خريطة له حتى جنوب *السودان*"},
+            {"id": 176, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تأسست مدينة قرطاج الإفريقية على الساحل الشمالي للبحر المتوسط على يد الفينيقيين)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "يرجع الفضل إلى *الفينيقيين* في تأسيس مدينة *قرطاج* على البحر *المتوسط* لتأمين رحلاتهم التجارية"},
+            {"id": 177, "type": "essay", "question": "وضح العلاقة بين: تطبيق مفهوم الاقتصاد الأزرق ومشكلات قارة إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nيساهم استثمار الموارد المائية وتطبيق الاقتصاد *الأزرق* في القضاء على العديد من مشكلات القارة كـ *البطالة* و *الفقر* و *الجوع* وتحقيق الاكتفاء الذاتي"},
+            {"id": 178, "type": "mcq", "question": "من الجهود المصرية لتحقيق التنمية المستدامة في حوض النيل القيام بحفر عشرات الآبار في دولة...", "options": ["السودان", "تنزانيا", "كينيا", "أوغندا"], "correctAnswer": 2, "explanation": "من الجهود التي قامت بها *مصر* حفر عشرات الآبار في *كينيا*، وإنشاء سد *أوين* بأوغندا"},
+            {"id": 179, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تمتد جبال البحر الأحمر الانكسارية في ثلاث دول إفريقية هي مصر والسودان وإريتريا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 0, "explanation": "تمتد جبال *البحر الأحمر* في *مصر* و *السودان* و *إريتريا* على ساحل البحر الأحمر"},
+            {"id": 180, "type": "mcq", "question": "يمتد مجرى نهر النيل وروافده داخل أراضي عدد من الدول الإفريقية يبلغ...", "options": ["تسع دول", "عشر دول", "إحدى عشرة دولة", "اثنتا عشرة دولة"], "correctAnswer": 2, "explanation": "يُعد نهر النيل نهراً دولياً، وذلك لامتداد مجراه وروافده داخل أراضي *إحدى عشرة دولة* إفريقية"},
+            {"id": 181, "type": "essay", "question": "ما النتائج المترتبة على: انحدار هضبة البحيرات الاستوائية من الجنوب إلى الشمال؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nأدى ذلك إلى اتجاه وانحدار مياه المنابع *الدائمة* لتغذي نهر *النيل* وتصل مياهها إلى *مصر* و *السودان* في اتجاه الشمال"},
+            {"id": 182, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تُعد هضبة البحيرات الاستوائية أعلى هضاب قارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تعد هضبة *الحبشة* في الجزء الشرقي هي أعلى هضاب القارة وليست هضبة *البحيرات الاستوائية*"},
+            {"id": 183, "type": "mcq", "question": "تبلغ مساحة قارة إفريقيا حوالي 30.4 مليون كيلومتر مربع، لتمثل بذلك من مساحة قارات العالم نحو...", "options": ["10%", "20%", "25%", "30%"], "correctAnswer": 1, "explanation": "تبلغ مساحتها حوالي\n30.4 مليون كم وبهذا تمثل نحو *20%* من مساحة قارات العالم وتعد *ثاني* أكبر القارات"},
+            {"id": 184, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تقترب قارة إفريقيا من قارة آسيا عند مضيق جبل طارق)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تقترب من قارة *آسيا* عند مضيق *باب المندب*، بينما تقترب من قارة *أوروبا* عند مضيق *جبل طارق*"},
+            {"id": 185, "type": "essay", "question": "ما العلاقة بين: الاقتصاد الأزرق وأهداف التنمية المستدامة في إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتطبيق الاقتصاد *الأزرق* باستثمار الموارد *المائية* بشكل مستدام يضمن تحقيق التنمية *المستدامة* والقضاء على *الفقر* وتحقيق الاكتفاء الذاتي"},
+            {"id": 186, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تصنف جبال أطلس في شمال غرب إفريقيا كجبال انكسارية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "الجبال *الالتوائية* مثل جبال الكاب وجبال *أطلس*، بينما الجبال الانكسارية تتمثل في جبال *البحر الأحمر*"},
+            {"id": 187, "type": "essay", "question": "دلل على: التنوع في الحضارات القديمة التي نشأت على أرض إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nنشأت الحضارة *المصرية* القديمة، وحضارة *كوش* في السودان، وحضارة *أكسوم* في إريتريا وإثيوبيا، وحضارة *قرطاج* في تونس"},
+            {"id": 188, "type": "essay", "question": "ما مقترحاتك لـ: ترشيد الاستهلاك للحفاظ على الموارد المائية في قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتطبيق مفهوم الاقتصاد *الأخضر*، وتوعية المواطنين بمنع تسرب المياه، وتفعيل مواد الاتفاقيات *الدولية* لمنع *تلوث* المجاري المائية"},
+            {"id": 189, "type": "essay", "question": "بم تفسر: اختلاف اتساع السهول الساحلية للمحيط الهندي في شرق قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتختلف بحسب اقتراب أو ابتعاد *المرتفعات* من الساحل، فتتسع في *تنزانيا* وتضيق في *كينيا* بسبب اقتراب المرتفعات"},
+            {"id": 190, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (يقع نحو ثلثي مساحة قارة إفريقيا في النصف الجنوبي للكرة الأرضية)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "تمتد بين نصفي الكرة الأرضية حيث يقع نحو *ثلثي* مساحتها في النصف *الشمالي* والثلث الآخر في النصف *الجنوبي*"},
+            {"id": 191, "type": "essay", "question": "بم تفسر: تمثل هضبة الحبشة أهمية كبرى بالنسبة لمصر؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nتعتبر بمثابة المنابع *الموسمية* التي تمد نهر *النيل* بالمياه، وتتميز بخصوبة تربتها التي نقلت *الطمي* إلى *مصر* و *السودان*"},
+            {"id": 192, "type": "mcq", "question": "دائرة العرض الرئيسية التي تمر في منتصف قارة إفريقيا تقريباً هي...", "options": ["مدار السرطان", "دائرة الاستواء", "مدار الجدي", "الدائرة القطبية الشمالية"], "correctAnswer": 1, "explanation": "تمر بها ثلاث دوائر عرض رئيسية هي دائرة *الاستواء* في المنتصف، ومدار *السرطان* شمالاً، ومدار *الجدي* جنوباً"},
+            {"id": 193, "type": "tf", "question": "أيد صحة أو خطأ العبارة الآتية: (تقع جزيرة مدغشقر في المحيط الأطلنطي غرب قارة إفريقيا)", "options": ["العبارة صحيحة", "العبارة خاطئة"], "correctAnswer": 1, "explanation": "جزيرة *مدغشقر* أكبر جزر القارة وتقع في المحيط *الهندي* شرق قارة إفريقيا"},
+            {"id": 194, "type": "essay", "question": "دلل تاريخياً على: حرصت الحضارة المصرية القديمة على توطيد العلاقات مع جيرانها في إفريقيا.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nحرصوا على توطيد العلاقات التجارية مع الحضارات المجاورة لهم كحضارة *كوش* وبلاد *بونت*"},
+            {"id": 195, "type": "essay", "question": "قارن بين: السهول الساحلية للبحر المتوسط والسهول الساحلية للبحر الأحمر من حيث الاتساع.", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\n1- سهول البحر *المتوسط*: تتسع في شمال *مصر* وتضيق في بلاد *المغرب العربي*.\n2- سهول البحر *الأحمر*: هي سهول ساحلية *ضيقة* بسبب اقتراب الجبال من الساحل"},
+            {"id": 196, "type": "essay", "question": "ماذا يحدث إذا: كانت هضبة الحبشة تنحدر نحو الشرق بدلاً من الشمال الغربي؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nلن تتجه مياه الأمطار الساقطة عليها نحو نهر *النيل*، وبالتالي ستفقد *مصر* و *السودان* المصدر الأساسي لـ *المنابع الموسمية* و *الطمي* الخصب"},
+            {"id": 197, "type": "essay", "question": "بم تفسر: ضيق السهول الساحلية للبحر الأحمر في شرق قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nبسبب اقتراب جبال *البحر الأحمر* من *الساحل*"},
+            {"id": 198, "type": "mcq", "question": "اشتهرت حضارة كوش بعدة صناعات وتجارة قوية كان من أهمها تجارة...", "options": ["الفخار والزجاج", "الحديد والذهب", "الأخشاب والحرير", "التوابل والعطور"], "correctAnswer": 1, "explanation": "واشتهرت بتجارة العاج والبخور و *الحديد* و *الذهب*، إلى جانب حرفتي الزراعة والتعدين"},
+            {"id": 199, "type": "essay", "question": "ما العلاقة بين: الفينيقيين وحضارة قرطاج في تونس؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nيرجع الفضل إلى *الفينيقيين* في تأسيس مدينة *قرطاج* على البحر *المتوسط* لتأمين رحلاتهم التجارية من فينيقيا إلى إسبانيا"},
+            {"id": 200, "type": "essay", "question": "بم تفسر: تكون المنخفضات والواحات في الجزء الشمالي من قارة إفريقيا؟", "options": ["اضغط هنا لعرض الإجابة النموذجية والتعليل"], "correctAnswer": 0, "explanation": "*الإجابة النموذجية:*\nنظراً لاتساع مساحة هضبة *شمال إفريقيا* التي تتنوع فوقها مظاهر السطح فنجد المنخفضات كمنخفض *القطارة* والواحات مثل واحة *سيوة* و *الجوف*"}
+        ];
+
+        const QUESTION_KEYWORDS = ["بم تفسر:", "بم تفسر", "ما النتائج المترتبة على:", "ما النتائج المترتبة على", "دلل:", "دلل جغرافياً:", "ماذا يحدث إذا:", "قارن بين:", "ما العلاقة بين:"];
+
+        const FormattedText = ({ text, type }) => {
+            if (!text) return null;
+
+            if (type === 'question') {
+                let formatted = text;
+                QUESTION_KEYWORDS.forEach(kw => {
+                    if (formatted.startsWith(kw)) {
+                        formatted = formatted.replace(kw, `<span class="text-qhead dark:text-accent-glow font-black text-lg md:text-xl">${kw}</span>`);
+                    }
+                });
+                formatted = formatted.replace(/\((.*?)\)/g, '<span class="text-accent-dark dark:text-accent-glow font-bold">($1)</span>');
+                return <div dangerouslySetInnerHTML={{ __html: formatted }} className="text-lg md:text-2xl font-bold leading-relaxed text-primary dark:text-gray-100" />;
+            } 
+            
+            if (type === 'explanation') {
+                const processed = text.replace(/([^\n])\s*([0-9]+[\-\.\:])/g, '$1\n$2');
+                const lines = processed.split('\n');
+
+                return (
+                    <div className="text-base md:text-xl leading-relaxed text-gray-800 dark:text-gray-200 space-y-1.5">
+                        {lines.map((line, lIdx) => {
+                            const trimmed = line.trim();
+                            if (!trimmed) return <div key={lIdx} className="h-1.5"></div>;
+
+                            // عنوان الإجابة النموذجية
+                            if (trimmed.startsWith('*الإجابة النموذجية:*')) {
+                                return (
+                                    <div key={lIdx} className="text-accent-dark dark:text-accent-glow font-black text-lg md:text-2xl mb-1">
+                                        الإجابة النموذجية:
+                                    </div>
+                                );
+                            }
+
+                            // بداية الجملة المنتهية بنقطتين (مثل 1- سهول البحر المتوسط:) تُميز بالأزرق الملكي
+                            let prefix = null;
+                            let body = line;
+                            const colonMatch = line.match(/^(\s*(?:[0-9]+[\-\.\s]*)?[^:\n]+:)\s*(.*)$/);
+                            if (colonMatch && colonMatch[1].trim().length <= 45) {
+                                prefix = colonMatch[1].replace(/\*/g, '').trim();
+                                body = colonMatch[2];
+                            }
+
+                            const renderParts = (str) => {
+                                const parts = str.split(/(\*[^*]+\*)/g);
+                                return parts.map((part, pIdx) => {
+                                    if (part.startsWith('*') && part.endsWith('*')) {
+                                        return <span key={pIdx} className="text-accent-dark dark:text-accent-glow font-black px-1">{part.slice(1, -1)}</span>;
+                                    }
+                                    return <span key={pIdx}>{part}</span>;
+                                });
+                            };
+
+                            return (
+                                <p key={lIdx} className="leading-relaxed">
+                                    {prefix && (
+                                        <span className="text-[#1d4ed8] dark:text-[#60a5fa] font-black ml-1.5 inline-block">
+                                            {prefix}
+                                        </span>
+                                    )}
+                                    {renderParts(body)}
+                                </p>
+                            );
+                        })}
+                    </div>
+                );
+            }
+            return <span>{text}</span>;
+        };
+
+        const DrawingOverlay = ({ isActive, onClose }) => {
+            const canvasRef = useRef(null);
+            const [isDrawing, setIsDrawing] = useState(false);
+            const [color, setColor] = useState('#DC2626'); 
+            const [points, setPoints] = useState([]);
+            const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+
+            const colors = [
+                { hex: '#DC2626', name: 'أحمر' },
+                { hex: '#2563EB', name: 'أزرق' },
+                { hex: '#111111', name: 'أسود' },
+                { hex: '#EAB308', name: 'أصفر' },
+                { hex: '#16A34A', name: 'أخضر' }
+            ];
+
+            useEffect(() => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = 4;
+            }, [isActive]);
+
+            const analyzeGesture = (strokePoints) => {
+                if (strokePoints.length < 10) return false;
+
+                let startY = strokePoints[0].y;
+                let startX = strokePoints[0].x;
+                
+                let valleyIdx = 0;
+                let maxY = strokePoints[0].y;
+                for (let i = 1; i < strokePoints.length; i++) {
+                    if (strokePoints[i].y > maxY) {
+                        maxY = strokePoints[i].y;
+                        valleyIdx = i;
+                    }
+                }
+
+                let endY = strokePoints[strokePoints.length - 1].y;
+                let endX = strokePoints[strokePoints.length - 1].x;
+
+                const depth1 = maxY - startY;
+                const depth2 = maxY - endY;
+                
+                if (depth1 > 20 && depth2 > 40) {
+                    if (endX > startX + 30 || endX < startX - 30) { 
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            const startDrawing = (e) => {
+                const canvas = canvasRef.current;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                const ctx = canvas.getContext('2d');
+                ctx.beginPath();
+                ctx.moveTo(x, y);
+                ctx.strokeStyle = color;
+                
+                setIsDrawing(true);
+                setPoints([{ x, y }]);
+                setCursorPos({ x, y });
+            };
+
+            const draw = (e) => {
+                if (!isDrawing) {
+                    if (e.clientX) setCursorPos({ x: e.clientX, y: e.clientY });
+                    return;
+                }
+                
+                e.preventDefault(); 
+                const canvas = canvasRef.current;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+
+                const ctx = canvas.getContext('2d');
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                setPoints(prev => [...prev, { x, y }]);
+                setCursorPos({ x, y });
+            };
+
+            const stopDrawing = () => {
+                if (!isDrawing) return;
+                setIsDrawing(false);
+                
+                if (analyzeGesture(points)) {
+                    clearCanvas();
+                    setTimeout(() => {
+                        onClose();
+                    }, 300);
+                }
+            };
+
+            const clearCanvas = () => {
+                const canvas = canvasRef.current;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            };
+
+            if (!isActive) return null;
+
+            return (
+                <div className="fixed inset-0 z-50 overflow-hidden">
+                    <div 
+                        className="custom-cursor w-4 h-4 rounded-full border-2 border-white shadow-md pointer-events-none transition-colors duration-75"
+                        style={{ 
+                            left: cursorPos.x, 
+                            top: cursorPos.y, 
+                            backgroundColor: color,
+                            opacity: cursorPos.x > 0 ? 0.8 : 0 
+                        }}
+                    />
+                    
+                    <canvas
+                        ref={canvasRef}
+                        className="drawing-canvas absolute inset-0 w-full h-full"
+                        onMouseDown={startDrawing}
+                        onMouseMove={draw}
+                        onMouseUp={stopDrawing}
+                        onMouseOut={stopDrawing}
+                        onTouchStart={startDrawing}
+                        onTouchMove={draw}
+                        onTouchEnd={stopDrawing}
+                    />
+
+                    <div className="absolute top-24 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 rounded-full shadow-premium border border-gray-100 dark:border-gray-700 p-2 flex gap-3 items-center z-50 pointer-events-auto transition-colors">
+                        <button onClick={clearCanvas} className="w-10 h-10 rounded-full flex items-center justify-center text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors" title="مسح الكل">
+                            <i className="fa-solid fa-trash"></i>
+                        </button>
+                        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                        {colors.map(c => (
+                            <button
+                                key={c.hex}
+                                onClick={() => setColor(c.hex)}
+                                className={`w-8 h-8 rounded-full border-2 transition-transform ${color === c.hex ? 'scale-125 border-gray-400 dark:border-gray-300 shadow-md' : 'border-transparent'}`}
+                                style={{ backgroundColor: c.hex }}
+                                title={c.name}
+                            />
+                        ))}
+                        <div className="w-px h-6 bg-gray-300 dark:bg-gray-600 mx-1"></div>
+                        <button onClick={onClose} className="w-10 h-10 rounded-full flex items-center justify-center text-primary dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" title="إغلاق وضع الرسم">
+                            <i className="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    
+                    <div className="absolute bottom-24 left-1/2 transform -translate-x-1/2 bg-black/70 dark:bg-white/80 text-white dark:text-black px-4 py-2 rounded-full text-sm font-light pointer-events-none opacity-80 shadow-md whitespace-nowrap transition-colors">
+                        ارسم علامة الصح (✓) لمسح الشاشة والإغلاق
+                    </div>
+                </div>
+            );
+        };
+
+        const HomeScreen = ({ onStart, hasProgress, onResume, onRestart }) => {
+            const anim = CONFIG.enableAnimations;
+            const item = (delay, extra = "") => anim
+                ? { className: `${extra} intro-item`.trim(), style: { animationDelay: `${delay}s` } }
+                : { className: extra.trim() };
+
+            const chips = [
+                { icon: "fa-solid fa-user-graduate", label: CONFIG.grade },
+            ];
+
+            return (
+                <div className="flex-1 flex flex-col relative z-10 w-full h-full overflow-y-auto intro-bg">
+
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                        <div className="intro-grid"></div>
+                        <div className="intro-orb intro-orb-1"></div>
+                        <div className="intro-orb intro-orb-2"></div>
+                        <div className="intro-orb intro-orb-3"></div>
+                    </div>
+
+                    <div className="flex-1 flex flex-col items-center justify-center text-center px-4 md:px-8 py-8 w-full max-w-3xl mx-auto relative">
+
+                        <div {...(anim ? { className: "intro-emblem" } : {})} style={anim ? { animationDelay: "0.05s" } : {}}>
+                            <div className="intro-emblem-inner relative w-24 h-24 md:w-28 md:h-28 rounded-[2rem] md:rounded-[2.25rem] bg-primary dark:bg-secondary flex items-center justify-center mb-5 md:mb-6 ring-1 ring-accent/50 dark:ring-accent/60 shadow-[0_25px_50px_-18px_rgba(17,17,17,0.55)] dark:shadow-[0_0_50px_rgba(5,150,105,0.45)]">
+                                <i className="fa-solid fa-graduation-cap text-4xl md:text-5xl text-secondary dark:text-primary drop-shadow-[0_2px_6px_rgba(0,0,0,0.35)]"></i>
+                                <span className="absolute -bottom-3 -left-3 w-9 h-9 md:w-10 md:h-10 rounded-full bg-accent text-white text-base md:text-lg font-black flex items-center justify-center shadow-[0_8px_20px_-6px_rgba(5,150,105,0.85)] border-2 border-white dark:border-[#0f1115]">
+                                    <i className="fa-solid fa-star text-xs md:text-sm"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div {...item(0.15, "flex items-center justify-center gap-3 md:gap-5 mb-2")}>
+                            <span className="text-4xl md:text-6xl font-black text-primary dark:text-white drop-shadow-sm">موسوعة</span>
+                            <div className="flex flex-col items-center gap-1.5">
+                                <span className="block w-8 md:w-12 h-[3px] bg-gradient-to-l from-secondary to-accent rounded-full shadow-[0_0_8px_rgba(5,150,105,0.6)]"></span>
+                                <span className="block w-8 md:w-12 h-[3px] bg-accent/45 rounded-full"></span>
+                                <span className="block w-8 md:w-12 h-[3px] bg-accent/20 rounded-full"></span>
+                            </div>
+                            <div className="flex flex-col items-start justify-center">
+                                <span className="intro-gold text-3xl md:text-5xl font-black leading-none">الكنز</span>
+                                <span className="text-lg md:text-2xl font-bold leading-none text-accent-dark dark:text-accent-glow mt-1.5">التعليمي</span>
+                            </div>
+                        </div>
+
+                        <div {...item(0.3, "intro-divider mb-5 md:mb-6")}></div>
+
+                        <div {...item(0.4, "mb-5 md:mb-6 space-y-1.5")}>
+                            <h2 className="text-base md:text-2xl font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+                                بوابتك الذكية لإتقان{" "}
+                                <span className="font-black text-accent dark:text-accent-glow">{CONFIG.subject}</span>
+                            </h2>
+                            <p className="text-sm md:text-lg text-gray-500 dark:text-gray-400">
+                                مراجعة تفاعلية متكاملة مصممة بعناية لتحقيق أفضل نتيجة
+                            </p>
+                        </div>
+
+                        <div {...item(0.5, "flex flex-wrap items-center justify-center gap-2.5 md:gap-3 mb-5 md:mb-7")}>
+                            {chips.map((chip, idx) => (
+                                <span key={idx} className="intro-chip intro-chip-lg">
+                                    <i className={chip.icon}></i>
+                                    {chip.label}
+                                </span>
+                            ))}
+                        </div>
+
+                        <div {...item(0.62, "w-full max-w-lg mb-6 md:mb-8")}>
+                            <div className="relative overflow-hidden bg-white/85 dark:bg-gray-800/70 backdrop-blur-md border-2 border-accent/55 dark:border-accent/50 rounded-3xl px-5 py-4 md:px-7 md:py-5 shadow-premium dark:shadow-[0_0_30px_rgba(5,150,105,0.18)] transition-transform duration-300 hover:-translate-y-0.5">
+                                <div className="absolute -top-8 -left-8 w-24 h-24 bg-secondary/30 blur-2xl rounded-full"></div>
+                                <div className="relative flex items-center justify-center gap-3 md:gap-4 py-1">
+                                    <div className="shrink-0 w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-accent dark:bg-accent-dark flex items-center justify-center shadow-md">
+                                        <i className="fa-solid fa-book-quran text-white text-lg md:text-xl"></i>
+                                    </div>
+                                    <span className="text-lg md:text-3xl font-black leading-snug text-primary dark:text-white">{CONFIG.lesson}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div {...item(0.75, "flex flex-col items-center gap-3.5 w-full max-w-sm")}>
+                            {hasProgress ? (
+                                <>
+                                    <button
+                                        onClick={onResume}
+                                        className="intro-cta w-full bg-gradient-to-b from-accent-glow via-accent to-accent-dark text-white font-black text-lg md:text-xl py-3.5 md:py-4 rounded-2xl ring-1 ring-secondary/55 shadow-[0_20px_40px_-15px_rgba(5,150,105,0.65)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300"
+                                    >
+                                        <span className="relative z-10 flex items-center justify-center gap-2.5 drop-shadow-sm">
+                                            <i className="fa-solid fa-play text-base"></i>
+                                            استكمال المراجعة
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={onRestart}
+                                        className="w-full bg-white/70 dark:bg-gray-800/60 backdrop-blur border-2 border-primary/25 dark:border-gray-600 text-primary dark:text-gray-300 font-bold text-base md:text-lg py-2.5 md:py-3 rounded-2xl hover:border-accent hover:text-accent-dark dark:hover:text-accent-glow hover:bg-accent-light/50 dark:hover:bg-gray-800 transition-all duration-300 active:scale-95"
+                                    >
+                                        <span className="flex items-center justify-center gap-2.5">
+                                            <i className="fa-solid fa-rotate-right text-sm"></i>
+                                            البدء من جديد
+                                        </span>
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={onStart}
+                                    className="intro-cta w-full bg-gradient-to-b from-accent-glow via-accent to-accent-dark text-white font-black text-lg md:text-xl py-3.5 md:py-4 rounded-2xl ring-1 ring-secondary/55 shadow-[0_20px_40px_-15px_rgba(5,150,105,0.65)] hover:-translate-y-1 active:translate-y-0 transition-all duration-300"
+                                >
+                                    <span className="relative z-10 flex items-center justify-center gap-2.5 drop-shadow-sm">
+                                        <i className="fa-solid fa-rocket text-base"></i>
+                                        ابدأ المراجعة
+                                    </span>
+                                </button>
+                            )}
+                            <span className="text-[11px] md:text-xs text-gray-400 dark:text-gray-500 flex items-center gap-1.5">
+                                <i className="fa-solid fa-clock-rotate-left"></i>
+                                يُنصح بالمراجعة قبل الاختبار مباشرة
+                            </span>
+                        </div>
+
+                        <div {...item(0.9, "w-full mt-4 relative")}>
+                            <div className="w-full h-px bg-gradient-to-r from-transparent via-accent/55 to-transparent mb-3"></div>
+                            <div className="flex flex-col items-center">
+                                <span className="text-sm md:text-base font-bold text-gray-500 dark:text-gray-400 mb-0.5">رؤية وإعداد</span>
+                                <span className="text-xl md:text-3xl font-black text-primary dark:text-gray-100 flex items-center gap-2.5 drop-shadow-sm">
+                                    <i className="fa-solid fa-feather-pointed text-accent-dark dark:text-accent-glow text-lg md:text-xl"></i>
+                                    الأستاذ/ إسلام سعود
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const Watermark = () => (
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 select-none" aria-hidden="true">
+                <div className="watermark-layer">
+                    {Array.from({ length: 72 }).map((_, i) => (
+                        <div className="wm-item" key={i}>
+                            <span className="wm-title">موسوعة الكنز</span>
+                            <span className="wm-sub">أ/ إسلام سعود</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+
+        const TRANSITIONS = ["slide", "push", "fade", "zoom", "flip", "wipe", "rotate", "blur"];
+        const DIRECTIONAL_TRANSITIONS = { slide: true, push: true };
+
+        const QuizScreen = ({ 
+            questionData, 
+            currentIndex, 
+            totalQuestions, 
+            onNext, 
+            onPrev, 
+            onHome, 
+            userAnswer, 
+            onAnswer,
+            toggleDarkMode,
+            isDarkMode,
+            answers = {},
+            onJumpToQuestion
+        }) => {
+            const [showStatsModal, setShowStatsModal] = useState(false);
+
+            // Statistics calculation
+            const stats = useMemo(() => {
+                let correct = 0;
+                let wrong = 0;
+                let answered = 0;
+
+                QUIZ_DATA.forEach((q, idx) => {
+                    const ans = answers[idx];
+                    if (ans !== undefined) {
+                        answered++;
+                        if (q.type === 'essay') {
+                            correct++;
+                        } else {
+                            if (ans === q.correctAnswer) {
+                                correct++;
+                            } else {
+                                wrong++;
+                            }
+                        }
+                    }
+                });
+
+                const unanswered = totalQuestions - answered;
+                const percentage = Math.round((answered / totalQuestions) * 100) || 0;
+
+                return { correct, wrong, unanswered, answered, percentage };
+            }, [answers, totalQuestions]);
+            const [isDrawingMode, setIsDrawingMode] = useState(false);
+            const contentRef = useRef(null);
+            const touchStartX = useRef(0);
+
+            const [view, setView] = useState({ index: currentIndex, data: questionData, answer: userAnswer });
+            const [phase, setPhase] = useState('in');
+            const dirRef = useRef('next');
+            const transRef = useRef('slide');
+            const prevIndexRef = useRef(currentIndex);
+            const answerRef = useRef(userAnswer);
+            answerRef.current = userAnswer;
+
+            useEffect(() => {
+                if (prevIndexRef.current === currentIndex) return;
+                const dir = currentIndex > prevIndexRef.current ? 'next' : 'prev';
+                prevIndexRef.current = currentIndex;
+                dirRef.current = dir;
+
+                let nextTrans = TRANSITIONS[Math.floor(Math.random() * TRANSITIONS.length)];
+                if (nextTrans === transRef.current) {
+                    nextTrans = TRANSITIONS[(TRANSITIONS.indexOf(nextTrans) + 1) % TRANSITIONS.length];
+                }
+                transRef.current = nextTrans;
+
+                if (!CONFIG.enableAnimations) {
+                    setView({ index: currentIndex, data: questionData, answer: userAnswer });
+                    return;
+                }
+
+                const outMs = nextTrans === 'flip' ? 300 : 240;
+                setPhase('out');
+                const timer = setTimeout(() => {
+                    setView({ index: currentIndex, data: questionData, answer: answerRef.current });
+                    setPhase('in');
+                }, outMs);
+                return () => clearTimeout(timer);
+            }, [currentIndex]);
+
+            useEffect(() => {
+                setView(v => (v.index === currentIndex ? { ...v, answer: userAnswer } : v));
+            }, [userAnswer, currentIndex]);
+
+            useEffect(() => {
+                if (contentRef.current) {
+                    contentRef.current.scrollTop = 0;
+                }
+            }, [view.index]);
+
+            const handleTouchStart = (e) => {
+                touchStartX.current = e.changedTouches[0].screenX;
+            };
+
+            const handleTouchEnd = (e) => {
+                const touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX.current - touchEndX;
+                
+                if (diff > 50) {
+                    onPrev(); 
+                } else if (diff < -50) {
+                    onNext(); 
+                }
+            };
+
+            const toggleFullscreen = () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => console.log(err));
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            };
+
+            const hasAnswered = view.answer !== undefined;
+            const stageClass = CONFIG.enableAnimations
+                ? `q-${phase} q-${phase}-${transRef.current}${DIRECTIONAL_TRANSITIONS[transRef.current] ? `-${dirRef.current}` : ""}`
+                : "";
+            const expandClass = CONFIG.enableAnimations ? "transition-all duration-500 ease-in-out overflow-hidden" : "";
+
+            return (
+                <div className="flex flex-col h-screen w-screen relative">
+                    <Watermark />
+
+                    <header className="flex-shrink-0 z-40 bg-white dark:bg-gray-900 shadow-md px-4 md:px-8 py-3 md:py-4 flex justify-between items-center border-b-4 border-primary dark:border-accent transition-colors relative overflow-hidden">
+                        <div className="absolute bottom-0 right-0 h-1 bg-gradient-to-l from-accent-glow to-accent transition-all duration-500 ease-out shadow-[0_0_8px_rgba(5,150,105,0.85)] z-10" style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}></div>
+                        <div className="flex items-center gap-2 md:gap-4 flex-wrap max-w-[60%]">
+                            <i className="fa-solid fa-graduation-cap text-primary dark:text-accent-glow text-3xl md:text-4xl drop-shadow-sm"></i>
+                            <h1 className="text-base md:text-2xl font-bold text-primary dark:text-white flex items-center gap-1 md:gap-2 flex-wrap leading-tight">
+                                <span className="text-secondary-dark dark:text-secondary font-black">موسوعة</span> الكنز التعليمي
+                                <span className="hidden md:inline text-gray-300 dark:text-gray-600">|</span>
+                                <span className="text-xs md:text-lg text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                    رؤية وإعداد <span className="text-secondary-dark dark:text-secondary font-bold whitespace-nowrap">أ/ إسلام سعود</span>
+                                </span>
+                            </h1>
+                        </div>
+
+                        <div className="flex items-center gap-2 md:gap-5">
+                            <button 
+                                onClick={() => setShowStatsModal(true)}
+                                className="flex items-center gap-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 px-3 md:px-4 py-1.5 md:py-2 rounded-full dir-ltr border border-gray-200 dark:border-gray-700 shadow-inner cursor-pointer transition-all active:scale-95 group"
+                                title="اضغط لعرض إحصائيات الأسئلة وتخطيها"
+                            >
+                                <div className="flex items-baseline gap-1">
+                                    <span key={currentIndex} className="text-xl md:text-2xl font-black text-accent-dark dark:text-accent-glow q-num-pop">{currentIndex + 1}</span>
+                                    <span className="text-sm md:text-base text-gray-400 dark:text-gray-500 font-bold">/ {totalQuestions}</span>
+                                </div>
+                                <i className="fa-solid fa-chart-pie text-xs md:text-sm text-accent-dark/70 dark:text-accent-glow/70 group-hover:rotate-45 transition-transform mr-0.5"></i>
+                            </button>
+                            
+                            <button 
+                                onClick={toggleDarkMode}
+                                className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-accent-glow hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-lg md:text-xl border border-transparent dark:border-gray-700"
+                                title="الوضع الليلي"
+                            >
+                                <i className={`fa-solid ${isDarkMode ? 'fa-sun' : 'fa-moon'}`}></i>
+                            </button>
+
+                            <button 
+                                onClick={() => setIsDrawingMode(!isDrawingMode)}
+                                className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center transition-all text-lg md:text-xl border border-transparent dark:border-gray-700 ${isDrawingMode ? 'bg-accent text-white shadow-glow-emerald' : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'}`}
+                                title="أداة الرسم"
+                            >
+                                <i className="fa-solid fa-pen-nib"></i>
+                            </button>
+
+                            <button onClick={toggleFullscreen} className="hidden md:flex w-12 h-12 rounded-full items-center justify-center bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all text-xl border border-transparent dark:border-gray-700">
+                                <i className="fa-solid fa-expand"></i>
+                            </button>
+
+                            <button onClick={onHome} className="w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center bg-primary dark:bg-accent text-white dark:text-white hover:bg-black dark:hover:bg-accent-dark transition-all shadow-md text-lg md:text-xl">
+                                <i className="fa-solid fa-house"></i>
+                            </button>
+                        </div>
+                    </header>
+
+                    <main 
+                        ref={contentRef}
+                        className="flex-1 overflow-y-auto overflow-x-hidden relative z-10 scroll-smooth"
+                        onTouchStart={handleTouchStart}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        <div className={`max-w-4xl mx-auto px-4 md:px-6 pt-[5pt] pb-8 md:pb-12 flex flex-col gap-3 md:gap-5 ${stageClass}`} style={{ paddingTop: '5pt' }} key={`${view.index}-${phase}`}>
+                            
+                            <div className="bg-primary-light dark:bg-gray-800 border-2 border-primary dark:border-gray-600 rounded-xl md:rounded-3xl p-4 md:p-8 shadow-sm relative overflow-hidden transition-colors">
+                                <div className="absolute top-0 right-0 w-1.5 md:w-2 h-full bg-gradient-to-b from-secondary via-accent to-accent-dark"></div>
+                                <FormattedText text={view.data.question} type="question" />
+                            </div>
+
+                            <div className="flex flex-col gap-1.5 md:gap-4">
+                                {view.data.options.map((option, idx) => {
+                                    const isSelected = view.answer === idx;
+                                    const isCorrect = view.data.correctAnswer === idx;
+                                    const isEssay = view.data.type === 'essay';
+                                    
+                                    let borderStyle = "border-primary/20 dark:border-gray-600 hover:border-accent hover:bg-accent-light/50 dark:hover:border-accent-glow dark:hover:bg-gray-800/50";
+                                    let iconStyle = "bg-primary dark:bg-gray-700 text-white dark:text-gray-200";
+                                    let textStyle = "text-gray-800 dark:text-gray-300";
+
+                                    if (hasAnswered) {
+                                        if (isCorrect) {
+                                            borderStyle = "border-correct dark:border-green-500 bg-green-50 dark:bg-green-900/20 shadow-md";
+                                            iconStyle = "bg-correct dark:bg-green-600 text-white";
+                                            textStyle = "text-correct dark:text-green-400 font-bold";
+                                        } else if (isSelected && !isCorrect) {
+                                            borderStyle = "border-wrong dark:border-red-500 bg-red-50 dark:bg-red-900/20";
+                                            iconStyle = "bg-wrong dark:bg-red-600 text-white";
+                                            textStyle = "text-wrong dark:text-red-400";
+                                        } else {
+                                            borderStyle = "border-gray-200 dark:border-gray-700 opacity-50";
+                                            iconStyle = "bg-gray-300 dark:bg-gray-800 text-gray-500 dark:text-gray-600";
+                                        }
+                                    }
+
+                                    const letters = ['أ', 'ب', 'ج', 'د'];
+                                    const iconContent = isEssay ? <i className="fa-solid fa-lightbulb"></i> : letters[idx];
+
+                                    return (
+                                        <button 
+                                            key={idx}
+                                            onClick={() => !hasAnswered && onAnswer(idx)}
+                                            disabled={hasAnswered}
+                                            className={`flex items-center text-right w-full py-2.5 px-3 md:p-5 rounded-lg md:rounded-2xl border-2 transition-all duration-300 opt-stagger ${borderStyle} ${isEssay ? 'justify-center bg-gray-50 dark:bg-gray-800 shadow-sm' : ''}`}
+                                        >
+                                            <div className={`flex-shrink-0 w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-base md:text-xl ml-3 md:ml-4 shadow-sm ${iconStyle}`}>
+                                                {iconContent}
+                                            </div>
+                                            <span className={`text-base md:text-xl leading-snug ${textStyle} ${isEssay ? 'font-bold' : ''}`}>
+                                                {option}
+                                            </span>
+                                            {hasAnswered && isCorrect && !isEssay && (
+                                                <i className="fa-solid fa-check text-correct dark:text-green-500 text-xl md:text-4xl mr-auto pl-2"></i>
+                                            )}
+                                            {hasAnswered && isSelected && !isCorrect && !isEssay && (
+                                                <i className="fa-solid fa-xmark text-wrong dark:text-red-500 text-xl md:text-4xl mr-auto pl-2"></i>
+                                            )}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className={`${expandClass}`} style={{ maxHeight: hasAnswered ? '1500px' : '0px', opacity: hasAnswered ? 1 : 0 }}>
+                                <div className="mt-1 md:mt-4 border-2 border-accent dark:border-accent rounded-xl md:rounded-3xl p-4 md:p-8 bg-accent-light/60 dark:bg-gray-800 relative shadow-inner transition-colors">
+                                    <div className="absolute -top-3 md:-top-5 right-6 md:right-8 bg-accent dark:bg-accent-dark text-white px-3 md:px-6 py-0.5 md:py-1.5 rounded-full font-bold text-sm md:text-lg shadow-md border-2 border-accent-light dark:border-gray-800">
+                                        التعليل:
+                                    </div>
+                                    <FormattedText text={view.data.explanation} type="explanation" />
+                                </div>
+                            </div>
+
+                            {/* أزرار التنقل (السابق والتالي) أسفل الصفحة */}
+                            <div className="mt-4 md:mt-6 flex justify-between items-center">
+                                <button 
+                                    onClick={onPrev}
+                                    disabled={currentIndex === 0}
+                                    className={`flex items-center gap-2 md:gap-3 px-6 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl border-2 font-bold text-lg md:text-xl transition-all ${currentIndex === 0 ? 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed' : 'border-accent text-accent-dark dark:text-accent-glow hover:bg-accent-light/60 dark:hover:bg-gray-800 active:scale-95'}`}
+                                >
+                                    <i className="fa-solid fa-arrow-right"></i>
+                                    السابق
+                                </button>
+
+                                <button 
+                                    onClick={onNext}
+                                    disabled={currentIndex === totalQuestions - 1}
+                                    className={`flex items-center gap-2 md:gap-3 px-8 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl font-bold text-lg md:text-xl transition-all ${currentIndex === totalQuestions - 1 ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-500 cursor-not-allowed' : 'bg-accent text-white hover:bg-accent-dark shadow-[0_10px_25px_-8px_rgba(5,150,105,0.6)] active:scale-95'}`}
+                                >
+                                    التالي
+                                    <i className="fa-solid fa-arrow-left"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    {/* نافذة إحصائيات العداد التفاعلية */}
+                    {showStatsModal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setShowStatsModal(false)}>
+                            <div 
+                                className="bg-white dark:bg-gray-900 rounded-2xl md:rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border-2 border-accent dark:border-accent overflow-hidden" 
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {/* Modal Header */}
+                                <div className="flex items-center justify-between p-4 md:p-6 border-b border-gray-200 dark:border-gray-800 bg-gray-50/80 dark:bg-gray-800/50">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-accent-light dark:bg-accent-dark/40 flex items-center justify-center text-accent-dark dark:text-accent-glow text-xl">
+                                            <i className="fa-solid fa-chart-pie"></i>
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg md:text-2xl font-bold text-gray-900 dark:text-white">إحصائيات الأسئلة والتقدم</h3>
+                                            <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400">انقر على أي رقم سؤال للانتقال إليه مباشرة</p>
+                                        </div>
+                                    </div>
+                                    <button 
+                                        onClick={() => setShowStatsModal(false)}
+                                        className="w-10 h-10 rounded-full flex items-center justify-center text-gray-400 hover:text-gray-700 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                                    >
+                                        <i className="fa-solid fa-xmark text-xl"></i>
+                                    </button>
+                                </div>
+
+                                {/* Stat Cards */}
+                                <div className="p-4 md:p-6 overflow-y-auto space-y-4">
+                                    <div className="grid grid-cols-3 gap-2 md:gap-4 text-center">
+                                        {/* Correct Card */}
+                                        <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800/50">
+                                            <div className="w-8 h-8 rounded-full bg-correct text-white mx-auto flex items-center justify-center text-sm md:text-base mb-1 shadow-sm">
+                                                <i className="fa-solid fa-check"></i>
+                                            </div>
+                                            <div className="text-xl md:text-3xl font-black text-correct dark:text-green-400">{stats.correct}</div>
+                                            <div className="text-xs md:text-sm font-bold text-gray-600 dark:text-gray-300">إجابة صحيحة</div>
+                                        </div>
+
+                                        {/* Wrong Card */}
+                                        <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50">
+                                            <div className="w-8 h-8 rounded-full bg-wrong text-white mx-auto flex items-center justify-center text-sm md:text-base mb-1 shadow-sm">
+                                                <i className="fa-solid fa-xmark"></i>
+                                            </div>
+                                            <div className="text-xl md:text-3xl font-black text-wrong dark:text-red-400">{stats.wrong}</div>
+                                            <div className="text-xs md:text-sm font-bold text-gray-600 dark:text-gray-300">إجابة خطأ</div>
+                                        </div>
+
+                                        {/* Unanswered / Skipped Card */}
+                                        <div className="p-3 md:p-4 rounded-xl md:rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+                                            <div className="w-8 h-8 rounded-full bg-amber-500 text-white mx-auto flex items-center justify-center text-sm md:text-base mb-1 shadow-sm">
+                                                <i className="fa-solid fa-forward"></i>
+                                            </div>
+                                            <div className="text-xl md:text-3xl font-black text-amber-600 dark:text-amber-400">{stats.unanswered}</div>
+                                            <div className="text-xs md:text-sm font-bold text-gray-600 dark:text-gray-300">لم تُجب / تخطاها</div>
+                                        </div>
+                                    </div>
+
+                                    {/* Progress Bar */}
+                                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-xl">
+                                        <div className="flex justify-between items-center text-xs md:text-sm font-bold mb-1.5">
+                                            <span className="text-gray-600 dark:text-gray-400">نسبة الإنجاز الكلي</span>
+                                            <span className="text-accent-dark dark:text-accent-glow font-black">{stats.answered} من {totalQuestions} ({stats.percentage}%)</span>
+                                        </div>
+                                        <div className="w-full h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden flex">
+                                            <div style={{ width: `${(stats.correct / totalQuestions) * 100}%` }} className="bg-correct transition-all duration-300" title={`صحيحة: ${stats.correct}`}></div>
+                                            <div style={{ width: `${(stats.wrong / totalQuestions) * 100}%` }} className="bg-wrong transition-all duration-300" title={`خطأ: ${stats.wrong}`}></div>
+                                        </div>
+                                    </div>
+
+                                    {/* Questions Grid */}
+                                    <div>
+                                        <h4 className="text-sm md:text-base font-bold text-gray-700 dark:text-gray-300 mb-2 flex items-center justify-between">
+                                            <span>خريطة الأسئلة:</span>
+                                            <span className="text-xs font-normal text-gray-400">اضغط على أي رقم للانتقال له</span>
+                                        </h4>
+                                        <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-1.5 md:gap-2 max-h-56 md:max-h-64 overflow-y-auto p-1.5 border border-gray-200 dark:border-gray-800 rounded-xl bg-gray-50/50 dark:bg-gray-800/30">
+                                            {QUIZ_DATA.map((q, idx) => {
+                                                const ans = answers[idx];
+                                                const isCur = idx === currentIndex;
+                                                let btnColor = "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-accent";
+                                                
+                                                if (ans !== undefined) {
+                                                    if (q.type === 'essay') {
+                                                        btnColor = "bg-green-100 dark:bg-green-900/40 text-correct dark:text-green-400 border-green-300 dark:border-green-700 font-bold";
+                                                    } else if (ans === q.correctAnswer) {
+                                                        btnColor = "bg-correct text-white border-green-600 font-bold";
+                                                    } else {
+                                                        btnColor = "bg-wrong text-white border-red-600 font-bold";
+                                                    }
+                                                }
+
+                                                return (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={() => {
+                                                            if (onJumpToQuestion) onJumpToQuestion(idx);
+                                                            setShowStatsModal(false);
+                                                        }}
+                                                        className={`h-9 md:h-10 text-xs md:text-sm rounded-lg border-2 flex items-center justify-center transition-all ${btnColor} ${isCur ? 'ring-2 ring-secondary-dark ring-offset-1 dark:ring-offset-gray-900 font-black scale-105 shadow-md' : 'active:scale-95'}`}
+                                                        title={`سؤال ${idx + 1}`}
+                                                    >
+                                                        {idx + 1}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Modal Footer */}
+                                <div className="p-3 md:p-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-800 flex justify-end">
+                                    <button
+                                        onClick={() => setShowStatsModal(false)}
+                                        className="px-5 py-2 rounded-xl bg-accent text-white font-bold hover:bg-accent-dark transition-all text-sm md:text-base shadow-sm active:scale-95"
+                                    >
+                                        متابعة الاختبار
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <DrawingOverlay isActive={isDrawingMode} onClose={() => setIsDrawingMode(false)} />
+                </div>
+            );
+        };
+
+                const DHIKR_LIST = [
+            "اللهم صلِّ وسلّم على نبينا محمد",
+            "الحمد لله رب العالمين",
+            "الحمد لله حمداً كثيراً طيباً مباركاً فيه",
+            "الحمد لله الذي بنعمته تتم الصالحات",
+            "اللهم لك الحمد والشكر",
+            "سبحان الله وبحمده، سبحان الله العظيم",
+            "سبحان الله، والحمد لله، ولا إله إلا الله، والله أكبر",
+            "سبحان الله وبحمده، عدد خلقه، ورضا نفسه، وزنة عرشه، ومداد كلماته",
+            "لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير",
+            "لا إله إلا الله العظيم الحليم",
+            "أستغفر الله العظيم وأتوب إليه",
+            "اللهم اغفر لي وارحمني واهدني وعافني وارزقني",
+            "رب اغفر لي وتب علي إنك أنت التواب الرحيم",
+            "اللهم لا سهل إلا ما جعلته سهلاً، وأنت تجعل الحزن إذا شئت سهلاً",
+            "اللهم إني أسألك علماً نافعاً، ورزقاً طيباً، وعملاً متقبلاً",
+            "لا حول ولا قوة إلا بالله",
+            "حسبي الله ونعم الوكيل",
+            "حسبنا الله ونعم الوكيل، على الله توكلنا",
+            "بسم الله، توكلت على الله، ولا حول ولا قوة إلا بالله",
+            "يا حي يا قيوم برحمتك أستغيث، أصلح لي شأني كله ولا تكلني إلى نفسي طرفة عين",
+            "بسم الله الذي لا يضر مع اسمه شيء في الأرض ولا في السماء وهو السميع العليم",
+            "اللهم إني أسألك العفو والعافية في الدنيا والآخرة",
+            "لا إله إلا أنت سبحانك إني كنت من الظالمين",
+            "اللهم يا مقلب القلوب ثبت قلبي على دينك",
+            "اللهم إني أسألك التوفيق والسداد"
+        ];
+
+        const DhikrModal = ({ dhikr, onDismiss }) => {
+            const [secondsLeft, setSecondsLeft] = useState(10);
+
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    setSecondsLeft(prev => {
+                        if (prev <= 1) {
+                            clearInterval(timer);
+                            onDismiss();
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+
+                return () => clearInterval(timer);
+            }, [onDismiss]);
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in" onClick={onDismiss}>
+                    <div 
+                        className="bg-white dark:bg-gray-900 rounded-3xl max-w-xl w-full p-6 md:p-8 shadow-2xl border-2 border-emerald-500/60 dark:border-emerald-500 flex flex-col items-center text-center relative overflow-hidden"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* شريط زمني للعد التنازلي */}
+                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-200 dark:bg-gray-800">
+                            <div 
+                                className="h-full bg-gradient-to-r from-emerald-500 to-accent transition-all duration-1000 ease-linear"
+                                style={{ width: `${(secondsLeft / 10) * 100}%` }}
+                            ></div>
+                        </div>
+
+                        {/* شارة الهيدر الإيمانية */}
+                        <div className="mt-2 inline-flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-bold shadow-sm border border-emerald-300 dark:border-emerald-700">
+                            <i className="fa-solid fa-hands-praying text-emerald-600 dark:text-emerald-400 text-sm"></i>
+                            <span>استراحة إيمانية</span>
+                        </div>
+
+                        <h3 className="mt-4 text-base md:text-lg font-bold text-gray-700 dark:text-gray-300 flex items-center justify-center gap-2">
+                            <i className="fa-solid fa-heart text-emerald-600 text-xs"></i>
+                            لا تنسَ ذكر الله والصلاة على حبيبنا رسول الله ﷺ
+                            <i className="fa-solid fa-heart text-emerald-600 text-xs"></i>
+                        </h3>
+
+                        {/* صندوق نص الذكر */}
+                        <div className="my-5 w-full bg-gradient-to-b from-emerald-50/70 to-emerald-100/40 dark:from-emerald-950/30 dark:to-gray-800/60 border-2 border-emerald-300 dark:border-emerald-700/60 rounded-2xl p-6 md:p-8 shadow-inner relative">
+                            <i className="fa-solid fa-quote-right text-emerald-300 dark:text-emerald-800 text-2xl md:text-3xl absolute top-3 right-3 opacity-50"></i>
+                            <p className="text-xl md:text-2xl font-black text-emerald-900 dark:text-emerald-100 leading-relaxed drop-shadow-sm select-text">
+                                {dhikr}
+                            </p>
+                            <i className="fa-solid fa-quote-left text-emerald-300 dark:text-emerald-800 text-2xl md:text-3xl absolute bottom-3 left-3 opacity-50"></i>
+                        </div>
+
+                        {/* مؤقت الثواني وزر المتابعة */}
+                        <div className="w-full flex flex-col md:flex-row items-center justify-between gap-3 mt-2">
+                            <div className="flex items-center gap-2 text-xs md:text-sm text-gray-500 dark:text-gray-400">
+                                <i className="fa-regular fa-clock text-emerald-600 animate-spin" style={{ animationDuration: '3s' }}></i>
+                                <span>الانتقال التلقائي خلال: <strong className="text-emerald-700 dark:text-emerald-400 text-base">{secondsLeft}</strong> ثوانٍ</span>
+                            </div>
+
+                            <button
+                                onClick={onDismiss}
+                                className="w-full md:w-auto px-6 py-2.5 rounded-xl bg-accent hover:bg-accent-dark text-white font-bold text-sm md:text-base shadow-md transition-all active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                <span>متابعة الاختبار</span>
+                                <i className="fa-solid fa-arrow-left"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const STORAGE_KEY_PROGRESS = 'quiz_progress_unit1';
+        const STORAGE_KEY_THEME = 'quiz_dark_mode';
+
+        const App = () => {
+            const [screen, setScreen] = useState('home'); 
+            const [currentIndex, setCurrentIndex] = useState(() => {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (typeof parsed.currentIndex === 'number' && parsed.currentIndex < QUIZ_DATA.length) {
+                            return parsed.currentIndex;
+                        }
+                    }
+                } catch(e) {}
+                return 0;
+            });
+            const [answers, setAnswers] = useState(() => {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_PROGRESS);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        return parsed.answers || {};
+                    }
+                } catch(e) {}
+                return {};
+            }); 
+            const [showDhikrModal, setShowDhikrModal] = useState(false);
+            const [currentDhikr, setCurrentDhikr] = useState("");
+            const [pendingNextIndex, setPendingNextIndex] = useState(null);
+            const [isDarkMode, setIsDarkMode] = useState(() => {
+                try {
+                    return localStorage.getItem(STORAGE_KEY_THEME) === 'true';
+                } catch(e) {}
+                return false;
+            });
+
+            // حفظ التقدم تلقائياً عند تغيير السؤال أو الإجابات
+            useEffect(() => {
+                try {
+                    localStorage.setItem(STORAGE_KEY_PROGRESS, JSON.stringify({
+                        currentIndex,
+                        answers,
+                        lastUpdated: Date.now()
+                    }));
+                } catch(e) {}
+            }, [currentIndex, answers]);
+
+            // تطبيق وحفظ الوضع الليلي
+            useEffect(() => {
+                try {
+                    localStorage.setItem(STORAGE_KEY_THEME, isDarkMode ? 'true' : 'false');
+                } catch(e) {}
+                if (isDarkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            }, [isDarkMode]);
+
+            const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+
+            const hasProgress = Object.keys(answers).length > 0 || currentIndex > 0;
+
+            const handleStart = () => {
+                try {
+                    localStorage.removeItem(STORAGE_KEY_PROGRESS);
+                } catch(e) {}
+                setCurrentIndex(0);
+                setAnswers({});
+                setScreen('quiz');
+            };
+
+            const handleResume = () => {
+                setScreen('quiz');
+            };
+
+            const handleRestart = () => {
+                try {
+                    localStorage.removeItem(STORAGE_KEY_PROGRESS);
+                } catch(e) {}
+                setCurrentIndex(0);
+                setAnswers({});
+                setScreen('quiz');
+            };
+
+            const handleNext = () => {
+                if (currentIndex < QUIZ_DATA.length - 1) {
+                    const nextIdx = currentIndex + 1;
+                    // بعد كل 10 أسئلة (أي عند السؤال 10، 20، 30... حيث currentIndex هو 9، 19، 29...)
+                    if ((currentIndex + 1) % 10 === 0) {
+                        const dhikrIdx = (Math.floor((currentIndex + 1) / 10) - 1) % DHIKR_LIST.length;
+                        setCurrentDhikr(DHIKR_LIST[dhikrIdx]);
+                        setPendingNextIndex(nextIdx);
+                        setShowDhikrModal(true);
+                    } else {
+                        setCurrentIndex(nextIdx);
+                    }
+                }
+            };
+
+            const handleDismissDhikr = () => {
+                setShowDhikrModal(false);
+                if (pendingNextIndex !== null) {
+                    setCurrentIndex(pendingNextIndex);
+                    setPendingNextIndex(null);
+                }
+            };
+
+            const handlePrev = () => {
+                if (currentIndex > 0) {
+                    setCurrentIndex(prev => prev - 1);
+                }
+            };
+
+            const handleAnswer = (optionIndex) => {
+                setAnswers(prev => ({ ...prev, [currentIndex]: optionIndex }));
+            };
+
+            return (
+                <div className={`h-screen w-screen flex flex-col bg-white dark:bg-[#0f1115] overflow-hidden text-gray-900 dark:text-gray-100 selection:bg-accent selection:text-white transition-colors duration-300`}>
+                    {screen === 'home' && (
+                        <HomeScreen 
+                            onStart={handleStart} 
+                            hasProgress={hasProgress} 
+                            onResume={handleResume} 
+                            onRestart={handleRestart} 
+                        />
+                    )}
+                    
+                    {screen === 'quiz' && (
+                        <QuizScreen 
+                            questionData={QUIZ_DATA[currentIndex]}
+                            currentIndex={currentIndex}
+                            totalQuestions={QUIZ_DATA.length}
+                            onNext={handleNext}
+                            onPrev={handlePrev}
+                            onHome={() => setScreen('home')}
+                            userAnswer={answers[currentIndex]}
+                            onAnswer={handleAnswer}
+                            toggleDarkMode={toggleDarkMode}
+                            isDarkMode={isDarkMode}
+                            answers={answers}
+                            onJumpToQuestion={(idx) => setCurrentIndex(idx)}
+                        />
+                    )}
+
+                    {showDhikrModal && (
+                        <DhikrModal 
+                            dhikr={currentDhikr} 
+                            onDismiss={handleDismissDhikr} 
+                        />
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
